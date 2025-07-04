@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+1. 通过网络搜索找到对应leectcode题目
+2. 编写对应kdoc 要求第一行为对应题目号及其url链接。如：[199. 二叉树的右视图](mdc:https:/leetcode.com/problems/binary-tree-right-side-view) 其余为题目要求。
+3. 分析已有题解，将其思路作为kdoc的一部分。
+4. 对已有题解进行优化，使其更符合kotlin风格，并更具可读性。
+5. 优化完成后，描述可能的用例场景。不进行测试用例的编写，而是请示我是否编写测试代码。
+
+6. 如果我回复继续，则进行测试用例的编写。不尝试执行测试用例。而是由我来执行测试用例。

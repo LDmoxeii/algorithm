@@ -19,11 +19,11 @@ package com.only4.algorithm.leetcode
  * - 输出: 0
  *
  * 解题思路:
- * 使用动态规划解决此问题。定义dp[i]为凑成金额i所需的最少硬币数。
+ * 使用动态规划解决此问题。定义dp[currentAmount]为凑成金额currentAmount所需的最少硬币数。
  * 1. 初始化dp[0] = 0，因为凑成金额0不需要任何硬币
- * 2. 对于其他金额i，初始化为一个较大的值（这里用Int.MAX_VALUE/2，避免后续加1操作溢出）
- * 3. 对于每个金额i，遍历所有硬币面额，如果当前面额小于等于i，则尝试用该硬币
- * 4. 状态转移方程: dp[i] = min(dp[i], dp[i - coin] + 1)
+ * 2. 对于其他金额currentAmount，初始化为一个较大的值（这里用Int.MAX_VALUE/2，避免后续加1操作溢出）
+ * 3. 对于每个金额currentAmount，遍历所有硬币面额，如果当前面额小于等于currentAmount，则尝试用该硬币
+ * 4. 状态转移方程: dp[currentAmount] = min(dp[currentAmount], dp[currentAmount - coin] + 1)
  * 5. 最终如果dp[amount]仍为初始值，则返回-1，否则返回dp[amount]
  *
  * 时间复杂度: O(amount * n)，其中n是硬币的种类数，需要计算amount个状态，每个状态需要遍历n个硬币
@@ -34,19 +34,19 @@ package com.only4.algorithm.leetcode
  * @return 凑成总金额所需的最少硬币个数，如果无法凑成则返回-1
  */
 fun coinChange(coins: IntArray, amount: Int): Int {
-    // 创建dp数组，dp[i]表示凑成金额i所需的最少硬币数
+    // 创建dp数组，dp[currentAmount]表示凑成金额currentAmount所需的最少硬币数
     // 初始化为一个较大的值，避免整型溢出
     val dp = IntArray(amount + 1) { Int.MAX_VALUE / 2 }
     // 基础情况：凑成金额0不需要任何硬币
     dp[0] = 0
 
     // 计算每个金额所需的最少硬币数
-    for (i in 1..amount) {
+    for (currentAmount in 1..amount) {
         for (coin in coins) {
             // 只有当硬币面额小于等于当前金额时才能使用
-            if (i < coin) continue
+            if (currentAmount < coin) continue
             // 状态转移：使用当前硬币后，所需的最少硬币数
-            dp[i] = minOf(dp[i], dp[i - coin] + 1)
+            dp[currentAmount] = minOf(dp[currentAmount], dp[currentAmount - coin] + 1)
         }
     }
 

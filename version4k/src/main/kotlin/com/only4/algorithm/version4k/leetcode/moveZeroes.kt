@@ -31,11 +31,11 @@ package com.only4.algorithm.version4k.leetcode
 fun moveZeroes(nums: IntArray) {
     var nonZeroIndex = 0
 
-    for (i in nums.indices) {
-        if (nums[i] != 0) {
+    for (zeroIndex in nums.indices) {
+        if (nums[zeroIndex] != 0) {
             // 交换当前元素与nonZeroIndex位置的元素
-            if (i != nonZeroIndex) {
-                nums[nonZeroIndex] = nums[i].also { nums[i] = nums[nonZeroIndex] }
+            if (zeroIndex != nonZeroIndex) {
+                nums[nonZeroIndex] = nums[zeroIndex].also { nums[zeroIndex] = nums[nonZeroIndex] }
             }
             nonZeroIndex++
         }

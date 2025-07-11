@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 1. 通过网络搜索找到对应leectcode题目
 2. 编写对应kdoc 要求第一行为对应题目号及其url链接。如：[199. 二叉树的右视图](mdc:https:/leetcode.com/problems/binary-tree-right-side-view) 其余为题目要求。

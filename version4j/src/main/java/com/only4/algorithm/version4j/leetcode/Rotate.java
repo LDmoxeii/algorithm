@@ -34,6 +34,23 @@ public class Rotate {
     }
 
     public void rotate(int[][] matrix) {
-        //TODO
+        int top = 0, bottom = matrix.length - 1;
+        int left = 0, right = matrix[0].length - 1;
+
+        while (top < bottom) {
+            int steps = right - left;
+            for (int offset = 0; offset < steps; offset++) {
+                int temp = matrix[top][left + offset];
+
+                matrix[top][left + offset] = matrix[bottom - offset][left];
+                matrix[bottom - offset][left] = matrix[bottom][right - offset];
+                matrix[bottom][right - offset] = matrix[top + offset][right];
+                matrix[top + offset][right] = temp;
+            }
+            top++;
+            bottom--;
+            left++;
+            right--;
+        }
     }
 }

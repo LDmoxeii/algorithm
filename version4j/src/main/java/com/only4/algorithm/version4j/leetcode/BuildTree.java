@@ -28,18 +28,18 @@ public class BuildTree {
 
         int rootV = preorder[preorderStart];
         TreeNode root = new TreeNode(rootV);
-        int index = findIndex(inorder, rootV);
-        int len = index - inorderStart;
+        int inorderMid = findInorderMid(inorder, rootV);
+        int leftLen = inorderMid - inorderStart;
 
         TreeNode left = buildTree(
                 preorder, inorder,
-                preorderStart + 1, preorderStart + len,
-                inorderStart, index - 1
+                preorderStart + 1, preorderStart + leftLen,
+                inorderStart, inorderMid - 1
         );
         TreeNode right = buildTree(
                 preorder, inorder,
-                preorderStart + 1 + len, preorderEnd,
-                inorderStart + len + 1, inorderEnd
+                preorderStart + leftLen + 1, preorderEnd,
+                inorderMid + 1, inorderEnd
         );
 
         root.left = left;
@@ -47,12 +47,12 @@ public class BuildTree {
         return root;
     }
 
-    public static int findIndex(int[] array, int target) {
+    public static int findInorderMid(int[] array, int target) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == target) {
                 return i;
             }
         }
-        return -1; // 表示未找到
+        throw new IllegalArgumentException("Target not found in array");
     }
 }

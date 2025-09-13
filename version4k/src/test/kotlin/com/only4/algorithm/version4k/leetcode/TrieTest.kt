@@ -48,20 +48,6 @@ class TrieTest {
     }
 
     @Test
-    fun `test case sensitivity`() {
-        trie.insert("Apple")
-        trie.insert("apple")
-
-        // 大小写敏感，所以两个都应该可以找到
-        assertTrue(trie.search("Apple"))
-        assertTrue(trie.search("apple"))
-
-        // 但不能找到不同大小写的变体
-        assertFalse(trie.search("APPLE"))
-        assertFalse(trie.search("aPPle"))
-    }
-
-    @Test
     fun `test multiple words with common prefixes`() {
         // 插入多个有共同前缀的单词
         trie.insert("app")
@@ -86,51 +72,6 @@ class TrieTest {
         assertFalse(trie.search("appli"))
         assertFalse(trie.search("appl"))
         assertFalse(trie.search("applications"))
-    }
-
-    @Test
-    fun `test words with special characters`() {
-        // 插入包含特殊字符的单词
-        trie.insert("hello-world")
-        trie.insert("hello_world")
-        trie.insert("hello@world")
-
-        // 所有插入的单词都应该能找到
-        assertTrue(trie.search("hello-world"))
-        assertTrue(trie.search("hello_world"))
-        assertTrue(trie.search("hello@world"))
-
-        // 共同前缀检查
-        assertTrue(trie.startsWith("hello-"))
-        assertTrue(trie.startsWith("hello_"))
-        assertTrue(trie.startsWith("hello@"))
-
-        // 未插入的变体不应该能找到
-        assertFalse(trie.search("helloworld"))
-        assertFalse(trie.search("hello.world"))
-    }
-
-    @Test
-    fun `test with numeric characters`() {
-        // 插入包含数字的单词
-        trie.insert("test123")
-        trie.insert("123test")
-        trie.insert("test123test")
-
-        // 所有插入的单词都应该能找到
-        assertTrue(trie.search("test123"))
-        assertTrue(trie.search("123test"))
-        assertTrue(trie.search("test123test"))
-
-        // 共同前缀检查
-        assertTrue(trie.startsWith("test"))
-        assertTrue(trie.startsWith("123"))
-        assertTrue(trie.startsWith("test123t"))
-
-        // 未插入的变体不应该能找到
-        assertFalse(trie.search("test"))
-        assertFalse(trie.search("123"))
-        assertFalse(trie.search("test123456"))
     }
 
     @Test

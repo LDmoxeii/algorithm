@@ -7,15 +7,16 @@ import com.only4.algorithm.version4j.extra.ListNode;
  */
 public class ReverseList {
     public ListNode reverseList(ListNode head) {
-        ListNode pre = null;
-        ListNode cur = head;
+        ListNode prev = null;
+        ListNode current = head;
 
-        while (cur != null) {
-            ListNode next = cur.next;
-            cur.next = pre;
-            pre = cur;
-            cur = next;
+        while (current != null) {
+            ListNode next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
         }
-        return pre;
+
+        return prev;
     }
 }

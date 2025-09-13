@@ -2,38 +2,33 @@ package com.only4.algorithm.version4j.leetcode;
 
 public class FindMedianSortedArrays {
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int n = nums1.length;
-        int m = nums2.length;
-        if (n > m) {
-            return findMedianSortedArrays(nums2, nums1);
-        }
-        int totalL = (n + m + 1) / 2;
+        int totalLength = nums1.length + nums2.length;
+        int[] mergedArray = new int[totalLength];
 
-        int left = 0, right = n;
-        while (left <= right) {
-            // [0, le1 - 1]
-            int le1 = left + (right - left) / 2;
-            // [0, le2 - 1]
-            int le2 = totalL - le1;
+        int index = 0, p1 = 0, p2 = 0;
 
-            int nums1LM = le1 == 0 ? Integer.MIN_VALUE : nums1[le1 - 1];
-            int nums1RM = le1 == n ? Integer.MAX_VALUE : nums1[le1];
-            int nums2LM = le2 == 0 ? Integer.MIN_VALUE : nums2[le2 - 1];
-            int nums2RM = le2 == m ? Integer.MAX_VALUE : nums2[le2];
-
-            if (nums1LM <= nums2RM && nums2LM <= nums1RM) {
-                if ((m + n) % 2 == 0) {
-                    return (double)(Math.max(nums1LM, nums2LM) + Math.min(nums1RM, nums2RM)) / 2;
-                } else {
-                    return Math.max(nums1LM, nums2LM);
-                }
+        // 合并两个有序数组
+        while (p1 < nums1.length && p2 < nums2.length) {
+            if (nums1[p1] < nums2[p2]) {
+                mergedArray[index++] = nums1[p1++];
             } else {
-                if (nums1LM > nums2RM) {
-                    right--;
-                } else left++;
+                mergedArray[index++] = nums2[p2++];
             }
         }
 
-        throw new RuntimeException();
+        // 处理剩余元素
+        while (p1 < nums1.length) {
+            mergedArray[index++] = nums1[p1++];
+        }
+        while (p2 < nums2.length) {
+            mergedArray[index++] = nums2[p2++];
+        }
+
+        // 计算中位数
+        if (totalLength % 2 == 0) {
+            return (mergedArray[totalLength / 2] + mergedArray[totalLength / 2 - 1]) / 2.0;
+        } else {
+            return mergedArray[totalLength / 2];
+        }
     }
 }

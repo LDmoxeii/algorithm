@@ -9,26 +9,27 @@ import java.util.List;
 public class GenerateParenthesis {
     public List<String> generateParenthesis(int n) {
         List<String> result = new ArrayList<>();
-        dfs(n, 0, 0, new StringBuilder(), result);
+        StringBuilder path = new StringBuilder();
+        backtrack(n, 0, 0, path, result);
         return result;
     }
 
-    public void dfs(int n, int leftCount, int rightCount, StringBuilder sequence, List<String> result) {
-        if (sequence.length() == n * 2) {
-            result.add(sequence.toString());
+    public void backtrack(int n, int leftCount, int rightCount, StringBuilder path, List<String> result) {
+        if (path.length() == n * 2) {
+            result.add(path.toString());
             return;
         }
 
         if (leftCount < n) {
-            sequence.append('(');
-            dfs(n, leftCount + 1, rightCount, sequence, result);
-            sequence.deleteCharAt(sequence.length() - 1);
+            path.append('(');
+            backtrack(n, leftCount + 1, rightCount, path, result);
+            path.deleteCharAt(path.length() - 1);
         }
 
         if (leftCount > rightCount) {
-            sequence.append(')');
-            dfs(n, leftCount, rightCount + 1, sequence, result);
-            sequence.deleteCharAt(sequence.length() - 1);
+            path.append(')');
+            backtrack(n, leftCount, rightCount + 1, path, result);
+            path.deleteCharAt(path.length() - 1);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.only4.algorithm.version4j.leetcode;
 
 public class FindMin {
-
     public int findMin(int[] nums) {
         int left = 0, right = nums.length - 1;
         while (left < right) {

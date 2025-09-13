@@ -1,5 +1,6 @@
 package com.only4.algorithm.version4j.leetcode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,31 +8,42 @@ import java.util.List;
  */
 public class SpiralOrder {
     public List<Integer> spiralOrder(int[][] matrix) {
-        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        int m = matrix.length;
-        if (m == 0) return List.of();
-        int n = matrix[0].length;
-        boolean[][] visited = new boolean[m][n];
+        if (matrix.length == 0) return new ArrayList<>();
 
-        int x = 0, y = 0, directionIndex = 0;
-        List<Integer> result = new java.util.ArrayList<>();
+        List<Integer> result = new ArrayList<>();
+        int top = 0, bottom = matrix.length - 1;
+        int left = 0, right = matrix[0].length - 1;
 
-        for (int i = 0; i < m * n; i++) {
-            result.add(matrix[x][y]);
-            visited[x][y] = true;
+        while (top <= bottom && left <= right) {
+            // 1. 从左到右遍历上边界
+            for (int col = left; col <= right; col++) {
+                result.add(matrix[top][col]);
+            }
+            top++;
 
-            int nextX = x + directions[directionIndex][0];
-            int nextY = y + directions[directionIndex][1];
+            // 2. 从上到下遍历右边界
+            for (int row = top; row <= bottom; row++) {
+                result.add(matrix[row][right]);
+            }
+            right--;
 
-            if (nextX < 0 || nextX >= m || nextY < 0 || nextY >= n || visited[nextX][nextY]) {
-                directionIndex = (directionIndex + 1) % 4; // Change direction
-                nextX = x + directions[directionIndex][0];
-                nextY = y + directions[directionIndex][1];
+            // 3. 从右到左遍历下边界（如果存在剩余行）
+            if (top <= bottom) {
+                for (int col = right; col >= left; col--) {
+                    result.add(matrix[bottom][col]);
+                }
+                bottom--;
             }
 
-            x = nextX;
-            y = nextY;
+            // 4. 从下到上遍历左边界（如果存在剩余列）
+            if (left <= right) {
+                for (int row = bottom; row >= top; row--) {
+                    result.add(matrix[row][left]);
+                }
+                left++;
+            }
         }
+
         return result;
     }
 }

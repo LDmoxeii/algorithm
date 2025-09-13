@@ -1,51 +1,62 @@
 package com.only4.algorithm.version4j.leetcode;
 
 import java.util.ArrayDeque;
+import java.util.Queue;
 
-/**
- * [994. 腐烂的橘子](https://leetcode.com/problems/rotting-oranges/)
- * <p>
- * 在给定的 m x n 网格 grid 中，每个单元格可以有以下三个值之一：
- * - 值 0 代表空单元格；
- * - 值 1 代表新鲜橘子；
- * - 值 2 代表腐烂的橘子。
- *
- * <p>
- * 每分钟，腐烂的橘子会使上、下、左、右四个方向相邻的新鲜橘子腐烂。
- * 返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，则返回 -1。
- *
- * @author zhenyu.jiang
- */
 public class OrangesRotting {
+
+    private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    private static final int EMPTY = 0;
+    private static final int FRESH = 1;
+    private static final int ROTTEN = 2;
+
     public int orangesRotting(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+
+        int rows = grid.length;
+        int cols = grid[0].length;
         int freshCount = 0;
-        ArrayDeque<int[]> deque = new ArrayDeque<>();
-        int[][] directions = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+        Queue<int[]> rottenQueue = new ArrayDeque<>();
         int minutes = 0;
 
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid[0].length; y++) {
-                if (grid[x][y] == 1) {
+        // 统计新鲜橘子数量并将腐烂橘子加入队列
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (grid[row][col] == FRESH) {
                     freshCount++;
-                } else if (grid[x][y] == 2) {
-                    deque.add(new int[]{x, y});
+                } else if (grid[row][col] == ROTTEN) {
+                    rottenQueue.offer(new int[]{row, col});
                 }
             }
         }
 
-        while (!deque.isEmpty() && freshCount > 0) {
-            int size = deque.size();
-            while (size-- != 0) {
-                int[] coordinate = deque.pollFirst();
-                for (int[] direction : directions) {
-                    int y = coordinate[1] + direction[1];
-                    int x = coordinate[0] + direction[0];
-                    if (isValid(grid.length, grid[0].length, x, y)) {
-                        if (grid[x][y] == 1) {
-                            freshCount--;
-                            grid[x][y] = 2;
-                            deque.addLast(new int[]{x, y});
-                        }
+        // 如果没有新鲜橘子，直接返回0
+        if (freshCount == 0) {
+            return 0;
+        }
+
+        // BFS模拟腐烂过程
+        while (!rottenQueue.isEmpty() && freshCount > 0) {
+            int queueSize = rottenQueue.size();
+
+            // 处理当前分钟所有腐烂的橘子
+            for (int i = 0; i < queueSize; i++) {
+                int[] current = rottenQueue.poll();
+                int currentRow = current[0];
+                int currentCol = current[1];
+
+                // 检查四个方向
+                for (int[] direction : DIRECTIONS) {
+                    int newRow = currentRow + direction[0];
+                    int newCol = currentCol + direction[1];
+
+                    if (isValidPosition(rows, cols, newRow, newCol) &&
+                            grid[newRow][newCol] == FRESH) {
+                        grid[newRow][newCol] = ROTTEN;
+                        freshCount--;
+                        rottenQueue.offer(new int[]{newRow, newCol});
                     }
                 }
             }
@@ -55,7 +66,7 @@ public class OrangesRotting {
         return freshCount == 0 ? minutes : -1;
     }
 
-    public boolean isValid(int boundaryX, int boundaryY, int x, int y) {
-        return x > -1 && x < boundaryX && y > -1 && y < boundaryY;
+    private boolean isValidPosition(int rows, int cols, int row, int col) {
+        return row >= 0 && row < rows && col >= 0 && col < cols;
     }
 }

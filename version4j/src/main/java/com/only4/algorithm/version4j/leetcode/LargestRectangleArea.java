@@ -4,41 +4,40 @@ import java.util.ArrayDeque;
 
 public class LargestRectangleArea {
     public int largestRectangleArea(int[] heights) {
-        int result = 0;
+        if (heights.length == 0) return 0;
 
-        int[] left = new int[heights.length];
-        int[] right = new int[heights.length];
+        int[] leftBoundary = new int[heights.length];
+        int[] rightBoundary = new int[heights.length];
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        int maxArea = 0;
 
-        ArrayDeque<Integer> deque = new ArrayDeque<>();
-
+        // 计算每个柱子左边第一个比它矮的柱子位置
         for (int i = 0; i < heights.length; i++) {
-            while (!deque.isEmpty() && heights[deque.peekLast()] >= heights[i]) {
-                deque.removeLast();
+            while (!stack.isEmpty() && heights[stack.peekLast()] >= heights[i]) {
+                stack.removeLast();
             }
-            left[i] = deque.isEmpty() ? -1 : deque.peekLast();
-            deque.addLast(i);
+            leftBoundary[i] = stack.isEmpty() ? -1 : stack.peekLast();
+            stack.addLast(i);
         }
 
-        deque = new ArrayDeque<>();
+        stack.clear();
 
+        // 计算每个柱子右边第一个比它矮的柱子位置
         for (int i = heights.length - 1; i >= 0; i--) {
-            while (!deque.isEmpty() && heights[deque.peekLast()] >= heights[i]) {
-                deque.removeLast();
+            while (!stack.isEmpty() && heights[stack.peekLast()] >= heights[i]) {
+                stack.removeLast();
             }
-            right[i] = deque.isEmpty() ? heights.length : deque.peekLast();
-            deque.addLast(i);
+            rightBoundary[i] = stack.isEmpty() ? heights.length : stack.peekLast();
+            stack.addLast(i);
         }
 
+        // 计算每个柱子能够形成的最大矩形面积
         for (int i = 0; i < heights.length; i++) {
-            int area = (right[i] - left[i] - 1) * heights[i];
-            result = Math.max(result, area);
+            int area = (rightBoundary[i] - leftBoundary[i] - 1) * heights[i];
+            maxArea = Math.max(maxArea, area);
         }
 
-        return result;
-    }
-
-    public static void main(String[] args) {
-        new LargestRectangleArea().largestRectangleArea(new int[]{1});
+        return maxArea;
     }
 }
 

@@ -6,31 +6,34 @@ import java.util.List;
 import java.util.Random;
 
 public class FindKthLargest {
-
-    public int quickSelect(List<Integer> nums, int k) {
-        Random random = new Random();
-        int pivot = nums.get(random.nextInt(0, nums.size()));
-
-        ArrayList<Integer> bigger = new ArrayList<>();
-        ArrayList<Integer> equal = new ArrayList<>();
-        ArrayList<Integer> smaller = new ArrayList<>();
-
-        for (int num : nums) {
-            if (num > pivot) bigger.add(num);
-            if (num == pivot) equal.add(num);
-            if (num < pivot) smaller.add(num);
-        }
-
-        if (bigger.size() >= k) {
-            return quickSelect(bigger, k);
-        } else if (equal.size() >= k - bigger.size()) {
-            return equal.get(0);
-        } else {
-            return quickSelect(smaller, k - bigger.size() - equal.size());
-        }
+    public int findKthLargest(int[] nums, int k) {
+        return quickSelect(Arrays.asList(Arrays.stream(nums).boxed().toArray(Integer[]::new)), k);
     }
 
-    public int findKthLargest(int[] nums, int k) {
-        return quickSelect(Arrays.stream(nums).boxed().toList(), k);
+    private int quickSelect(List<Integer> nums, int k) {
+        Random random = new Random();
+        int pivot = nums.get(random.nextInt(nums.size()));
+
+        List<Integer> larger = new ArrayList<>();
+        List<Integer> equal = new ArrayList<>();
+        List<Integer> smaller = new ArrayList<>();
+
+        for (int num : nums) {
+            if (num > pivot) {
+                larger.add(num);
+            } else if (num == pivot) {
+                equal.add(num);
+            } else {
+                smaller.add(num);
+            }
+        }
+
+        if (k <= larger.size()) {
+            return quickSelect(larger, k);
+        } else if (k <= larger.size() + equal.size()) {
+            return pivot;
+        } else {
+            return quickSelect(smaller, k - larger.size() - equal.size());
+        }
     }
 }

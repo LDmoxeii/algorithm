@@ -8,15 +8,14 @@ import com.only4.algorithm.version4j.extra.TreeNode;
 public class LowestCommonAncestor {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if (root == null) return null;
-        if (root == p) return p;
-        if (root == q) return q;
+        if (root == p || root == q) return root;
 
-        TreeNode left = lowestCommonAncestor(root.left, p, q);
-        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        TreeNode leftResult = lowestCommonAncestor(root.left, p, q);
+        TreeNode rightResult = lowestCommonAncestor(root.right, p, q);
 
-        if (left != null && right != null) return root;
-        if (left != null) return left;
-        if (right != null) return right;
+        if (leftResult != null && rightResult != null) return root;
+        if (leftResult != null) return leftResult;
+        if (rightResult != null) return rightResult;
         return null;
     }
 }

@@ -5,37 +5,46 @@ package com.only4.algorithm.version4j.leetcode;
  */
 public class SearchRange {
     public int[] searchRange(int[] nums, int target) {
-        int left, right;
-        int first, end;
+        int leftBound = findLeftBound(nums, target);
+        int rightBound = findRightBound(nums, target);
+        return new int[]{leftBound, rightBound};
+    }
 
-        left = 0;
-        right = nums.length - 1;
+    private int findLeftBound(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] == target) right = mid - 1;
-            else if (nums[mid] < target) left = mid + 1;
-            else right = mid - 1;
+            if (nums[mid] == target) {
+                right = mid - 1;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
 
-        if (left < 0 || left > nums.length - 1) {
-            first = -1;
-        } else if (nums[left] != target) first = -1;
-        else first = left;
+        if (left < 0 || left >= nums.length || nums[left] != target) {
+            return -1;
+        }
+        return left;
+    }
 
-        left = 0;
-        right = nums.length - 1;
+    private int findRightBound(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] == target) left = mid + 1;
-            else if (nums[mid] < target) left = mid + 1;
-            else right = mid - 1;
+            if (nums[mid] == target) {
+                left = mid + 1;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
 
-        if (right < 0 || right > nums.length - 1) {
-            end = -1;
-        } else if (nums[right] != target) end = -1;
-        else end = right;
-
-        return new int[]{first, end};
+        if (right < 0 || right >= nums.length || nums[right] != target) {
+            return -1;
+        }
+        return right;
     }
 }

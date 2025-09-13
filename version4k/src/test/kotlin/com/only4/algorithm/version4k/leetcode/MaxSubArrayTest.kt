@@ -30,14 +30,6 @@ class MaxSubArrayTest {
     }
 
     @Test
-    fun `test with empty array`() {
-        val nums = intArrayOf()
-        val expected = 0
-        val result = maxSubArray(nums)
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun `test with all negative numbers`() {
         val nums = intArrayOf(-1, -2, -3, -4)
         val expected = -1

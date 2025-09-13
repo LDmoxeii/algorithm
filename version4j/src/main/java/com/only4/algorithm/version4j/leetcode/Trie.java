@@ -5,53 +5,86 @@ package com.only4.algorithm.version4j.leetcode;
  */
 class Trie {
 
-    private Node root;
+    private static final int ALPHABET_SIZE = 26;
+    private final TrieNode root;
 
-    class Node {
-        Node[] children;
-        boolean isEnd;
+    /**
+     * Trie节点定义
+     */
+    private static class TrieNode {
+        TrieNode[] children;
+        boolean isEndOfWord;
 
-        public Node() {
-            this.children = new Node[26];
-            this.isEnd = false;
+        public TrieNode() {
+            this.children = new TrieNode[ALPHABET_SIZE];
+            this.isEndOfWord = false;
         }
     }
 
+    /**
+     * 初始化Trie对象
+     */
     public Trie() {
-        root = new Node();
+        root = new TrieNode();
     }
 
+    /**
+     * 向Trie中插入单词
+     *
+     * @param word 要插入的单词
+     */
     public void insert(String word) {
-        char[] chars = word.toCharArray();
-        Node pre = root;
-        Node current;
-        for (int i = 0; i < chars.length; i++) {
-            current = pre.children[chars[i] - 'a'];
-            if (current == null) current = new Node();
-            if (i == chars.length - 1) current.isEnd = true;
-            pre.children[chars[i] - 'a'] = current;
-            pre = current;
+        TrieNode current = root;
+
+        for (char ch : word.toCharArray()) {
+            int index = ch - 'a';
+            if (current.children[index] == null) {
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
         }
+
+        current.isEndOfWord = true;
     }
 
+    /**
+     * 搜索Trie中是否存在完整的单词
+     *
+     * @param word 要搜索的单词
+     * @return 单词是否存在
+     */
     public boolean search(String word) {
-        char[] chars = word.toCharArray();
-        Node node = root;
-        for (int i = 0; i < chars.length; i++) {
-            node = node.children[chars[i] - 'a'];
-            if (node == null) return false;
-            if (i == chars.length - 1) return node.isEnd;
-        }
-        return false;
+        TrieNode node = searchPrefix(word);
+        return node != null && node.isEndOfWord;
     }
 
+    /**
+     * 检查是否存在以给定前缀开头的单词
+     *
+     * @param prefix 要检查的前缀
+     * @return 是否存在该前缀
+     */
     public boolean startsWith(String prefix) {
-        char[] chars = prefix.toCharArray();
-        Node node = root;
-        for (char aChar : chars) {
-            node = node.children[aChar - 'a'];
-            if (node == null) return false;
+        return searchPrefix(prefix) != null;
+    }
+
+    /**
+     * 搜索前缀对应的节点
+     *
+     * @param prefix 前缀字符串
+     * @return 对应的节点，如果不存在返回null
+     */
+    private TrieNode searchPrefix(String prefix) {
+        TrieNode current = root;
+
+        for (char ch : prefix.toCharArray()) {
+            int index = ch - 'a';
+            if (current.children[index] == null) {
+                return null;
+            }
+            current = current.children[index];
         }
-        return true;
+
+        return current;
     }
 }

@@ -6,18 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InorderTraversal {
-    List<Integer> result = new ArrayList<>();
-
     public List<Integer> inorderTraversal(TreeNode root) {
-        helper(root);
+        List<Integer> result = new ArrayList<>();
+        inorderHelper(root, result);
         return result;
     }
 
-    public void helper(TreeNode root) {
-        if (root == null) return;
-        helper(root.left);
-        result.add(root.val);
-        helper(root.right);
-    }
+    private void inorderHelper(TreeNode node, List<Integer> result) {
+        if (node == null) return;
 
+        // 递归遍历左子树
+        inorderHelper(node.left, result);
+        // 访问当前节点
+        result.add(node.val);
+        // 递归遍历右子树
+        inorderHelper(node.right, result);
+    }
 }

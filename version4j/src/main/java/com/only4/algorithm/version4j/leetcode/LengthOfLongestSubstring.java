@@ -5,19 +5,26 @@ import java.util.Set;
 
 public class LengthOfLongestSubstring {
     public int lengthOfLongestSubstring(String s) {
-        Set<Character> memo = new HashSet<>();
+        Set<Character> windowChars = new HashSet<>();
 
-        char[] chars = s.toCharArray();
-        int slow = 0;
+        int left = 0;
+        int maxLength = 0;
 
-        int result = 0;
+        for (int right = 0; right < s.length(); right++) {
+            char rightChar = s.charAt(right);
 
-        for (int fast = 0; fast < chars.length; fast++) {
-            while (memo.contains(chars[fast])) memo.remove(chars[slow++]);
-            memo.add(chars[fast]);
-            result = Math.max(result, fast - slow + 1);
+            // 如果遇到重复字符，收缩左边界直到去除重复
+            while (windowChars.contains(rightChar)) {
+                windowChars.remove(s.charAt(left));
+                left++;
+            }
+
+            // 将当前字符加入窗口
+            windowChars.add(rightChar);
+            // 更新最大长度
+            maxLength = Math.max(maxLength, right - left + 1);
         }
 
-        return result;
+        return maxLength;
     }
 }

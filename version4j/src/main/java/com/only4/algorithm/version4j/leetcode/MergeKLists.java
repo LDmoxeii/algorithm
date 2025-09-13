@@ -2,27 +2,29 @@ package com.only4.algorithm.version4j.leetcode;
 
 import com.only4.algorithm.version4j.extra.ListNode;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
 import java.util.PriorityQueue;
 
 public class MergeKLists {
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists.length == 0) return null;
-        ListNode dummy = new ListNode(-1);
-        ListNode cursor = dummy;
 
-        PriorityQueue<ListNode> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(p -> p.val));
+        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
 
-        priorityQueue.addAll(Arrays.stream(lists).filter(Objects::nonNull).toList());
+        for (ListNode list : lists) {
+            if (list != null) pq.offer(list);
+        }
 
-        while (!priorityQueue.isEmpty()) {
-            ListNode min = priorityQueue.poll();
-            if (min.next != null) priorityQueue.add(min.next);
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
 
-            cursor.next = min;
-            cursor = cursor.next;
+        while (!pq.isEmpty()) {
+            ListNode node = pq.poll();
+            current.next = node;
+            current = current.next;
+
+            if (node.next != null) {
+                pq.offer(node.next);
+            }
         }
 
         return dummy.next;

@@ -9,26 +9,30 @@ import java.util.Map;
  * @author zhenyu.jiang
  */
 public class PathSum {
-
     public int pathSum(TreeNode root, int targetSum) {
         Map<Long, Integer> prefixSumCount = new HashMap<>();
         prefixSumCount.put(0L, 1);
-        return pathSum(root, 0, targetSum, prefixSumCount);
+        return dfs(root, 0L, targetSum, prefixSumCount);
     }
 
-    public int pathSum(TreeNode root, long currSum, int targetSum, Map<Long, Integer> prefixSumCount) {
-        if (root == null) return 0;
+    private int dfs(TreeNode node, long currentSum, int targetSum, Map<Long, Integer> prefixSumCount) {
+        if (node == null) return 0;
 
-        currSum += root.val;
+        currentSum += node.val;
 
-        Integer current = prefixSumCount.getOrDefault(currSum - targetSum, 0);
+        // 查找符合要求的路径数量
+        int pathCount = prefixSumCount.getOrDefault(currentSum - targetSum, 0);
 
-        prefixSumCount.merge(currSum, 1, Integer::sum);
+        // 更新当前前缀和的出现次数
+        prefixSumCount.merge(currentSum, 1, Integer::sum);
 
-        int totalCount = current + pathSum(root.left, currSum, targetSum, prefixSumCount) + pathSum(root.right, currSum, targetSum, prefixSumCount);
+        // 递归处理左右子树
+        int totalPaths = pathCount + dfs(node.left, currentSum, targetSum, prefixSumCount)
+                + dfs(node.right, currentSum, targetSum, prefixSumCount);
 
-        prefixSumCount.merge(currSum, -1, Integer::sum);
+        // 回溯，恢复状态
+        prefixSumCount.merge(currentSum, -1, Integer::sum);
 
-        return totalCount;
+        return totalPaths;
     }
 }

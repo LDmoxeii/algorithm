@@ -3,38 +3,36 @@ package com.only4.algorithm.version4j.leetcode;
 import java.util.ArrayDeque;
 
 class MinStack {
-
-    private final ArrayDeque<Node> deque;
+    private final ArrayDeque<Node> stack;
 
     static class Node {
         int val;
         int min;
+
+        Node(int val, int min) {
+            this.val = val;
+            this.min = min;
+        }
     }
 
     public MinStack() {
-        deque = new ArrayDeque<>();
-        Node node = new Node();
-        node.val = 0;
-        node.min = Integer.MAX_VALUE;
-        deque.add(node);
+        stack = new ArrayDeque<>();
     }
 
     public void push(int val) {
-        Node node = new Node();
-        node.val = val;
-        node.min = Math.min(val, getMin());
-        deque.addLast(node);
+        int currentMin = stack.isEmpty() ? val : Math.min(val, getMin());
+        stack.addLast(new Node(val, currentMin));
     }
 
     public void pop() {
-        deque.removeLast();
+        stack.removeLast();
     }
 
     public int top() {
-        return deque.peekLast().val;
+        return stack.peekLast().val;
     }
 
     public int getMin() {
-        return deque.peekLast().min;
+        return stack.peekLast().min;
     }
 }

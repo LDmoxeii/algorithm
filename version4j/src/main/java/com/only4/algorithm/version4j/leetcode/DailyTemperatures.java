@@ -4,13 +4,15 @@ import java.util.ArrayDeque;
 
 public class DailyTemperatures {
     public int[] dailyTemperatures(int[] temperatures) {
-        ArrayDeque<Integer> deque = new ArrayDeque<>();
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
         int[] result = new int[temperatures.length];
+
         for (int day = 0; day < temperatures.length; day++) {
-            while (!deque.isEmpty() && temperatures[deque.peekLast()] < temperatures[day]) {
-                result[deque.peekLast()] = day - deque.removeLast();
+            while (!stack.isEmpty() && temperatures[stack.peekLast()] < temperatures[day]) {
+                int prevDay = stack.removeLast();
+                result[prevDay] = day - prevDay;
             }
-            deque.add(day);
+            stack.addLast(day);
         }
 
         return result;

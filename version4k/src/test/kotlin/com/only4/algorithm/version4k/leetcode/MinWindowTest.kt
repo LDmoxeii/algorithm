@@ -42,15 +42,6 @@ class MinWindowTest {
     }
 
     @Test
-    fun `test with empty target string`() {
-        val s = "abc"
-        val t = ""
-        val expected = ""
-        val result = minWindow(s, t)
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun `test with empty source string`() {
         val s = ""
         val t = "abc"

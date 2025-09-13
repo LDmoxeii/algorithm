@@ -10,21 +10,25 @@ import java.util.List;
 public class Permute {
     public List<List<Integer>> permute(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        ArrayDeque<Integer> sequence = new ArrayDeque<>();
+        ArrayDeque<Integer> path = new ArrayDeque<>();
         boolean[] used = new boolean[nums.length];
-        dfs(nums, used, sequence, result);
+        backtrack(nums, used, path, result);
         return result;
     }
 
-    public void dfs(int[] nums, boolean[] used, ArrayDeque<Integer> sequence, List<List<Integer>> result) {
-        if (sequence.size() == nums.length) result.add(new ArrayList<>(sequence));
+    public void backtrack(int[] nums, boolean[] used, ArrayDeque<Integer> path, List<List<Integer>> result) {
+        if (path.size() == nums.length) {
+            result.add(new ArrayList<>(path));
+            return;
+        }
 
         for (int i = 0; i < nums.length; i++) {
             if (used[i]) continue;
+
             used[i] = true;
-            sequence.addLast(nums[i]);
-            dfs(nums, used, sequence, result);
-            sequence.removeLast();
+            path.addLast(nums[i]);
+            backtrack(nums, used, path, result);
+            path.removeLast();
             used[i] = false;
         }
     }

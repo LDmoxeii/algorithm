@@ -8,28 +8,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class LevelOrder {
-
     public List<List<Integer>> levelOrder(TreeNode root) {
         if (root == null) return Collections.emptyList();
 
-        ArrayDeque<TreeNode> deque = new ArrayDeque<>();
+        ArrayDeque<TreeNode> queue = new ArrayDeque<>();
         List<List<Integer>> result = new ArrayList<>();
 
-        deque.add(root);
+        queue.add(root);
 
-        while (!deque.isEmpty()) {
-            int size = deque.size();
-            List<Integer> group = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int currentLevelSize = queue.size();
+            List<Integer> currentLevel = new ArrayList<>();
 
-            while (size-- != 0) {
-                TreeNode poll = deque.pollFirst();
-                if (poll.left != null) deque.addLast(poll.left);
-                if (poll.right != null) deque.addLast(poll.right);
-                group.add(poll.val);
+            while (currentLevelSize-- > 0) {
+                TreeNode currentNode = queue.pollFirst();
+                currentLevel.add(currentNode.val);
+
+                if (currentNode.left != null) queue.addLast(currentNode.left);
+                if (currentNode.right != null) queue.addLast(currentNode.right);
             }
-            result.add(group);
+            result.add(currentLevel);
         }
         return result;
     }
-
 }

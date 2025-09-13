@@ -4,17 +4,23 @@ import java.util.ArrayDeque;
 
 public class IsValid {
     public boolean isValid(String s) {
-        ArrayDeque<Character> deque = new ArrayDeque<>();
+        ArrayDeque<Character> stack = new ArrayDeque<>();
 
         for (char c : s.toCharArray()) {
             if (c == '(' || c == '[' || c == '{') {
-                deque.addLast(c);
+                stack.addLast(c);
             } else {
-                if (c == ')') if (deque.isEmpty() || deque.removeLast() != '(') return false;
-                if (c == ']') if (deque.isEmpty() || deque.removeLast() != '[') return false;
-                if (c == '}') if (deque.isEmpty() || deque.removeLast() != '{') return false;
+                if (stack.isEmpty()) return false;
+
+                char top = stack.removeLast();
+                if ((c == ')' && top != '(') ||
+                        (c == ']' && top != '[') ||
+                        (c == '}' && top != '{')) {
+                    return false;
+                }
             }
         }
-        return deque.isEmpty();
+
+        return stack.isEmpty();
     }
 }

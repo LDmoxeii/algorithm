@@ -10,18 +10,18 @@ import java.util.List;
 public class Subsets {
     public List<List<Integer>> subsets(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        ArrayDeque<Integer> sequence = new ArrayDeque<>();
-        dfs(nums, 0, sequence, result);
+        ArrayDeque<Integer> path = new ArrayDeque<>();
+        backtrack(nums, 0, path, result);
         return result;
     }
 
-    public void dfs(int[] nums, int start, ArrayDeque<Integer> sequence, List<List<Integer>> result) {
-        result.add(new ArrayList<>(sequence));
+    public void backtrack(int[] nums, int startIndex, ArrayDeque<Integer> path, List<List<Integer>> result) {
+        result.add(new ArrayList<>(path));
 
-        for (int i = start; i < nums.length; i++) {
-            sequence.addLast(nums[i]);
-            dfs(nums, i + 1, sequence, result);
-            sequence.removeLast();
+        for (int i = startIndex; i < nums.length; i++) {
+            path.addLast(nums[i]);
+            backtrack(nums, i + 1, path, result);
+            path.removeLast();
         }
     }
 }

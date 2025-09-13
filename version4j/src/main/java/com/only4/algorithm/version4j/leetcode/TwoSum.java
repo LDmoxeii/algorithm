@@ -8,11 +8,22 @@ import java.util.Map;
  */
 public class TwoSum {
     public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> complementMap = new HashMap<>();
+        // 哈希表：数值 -> 索引
+        Map<Integer, Integer> numIndexMap = new HashMap<>();
+
         for (int i = 0; i < nums.length; i++) {
-            if (complementMap.containsKey(nums[i])) return new int[]{i, complementMap.get(nums[i])};
-            complementMap.put(target - nums[i], i);
+            int currentNum = nums[i];
+            int complement = target - currentNum;
+
+            // 检查补数是否已存在
+            if (numIndexMap.containsKey(complement)) {
+                return new int[]{numIndexMap.get(complement), i};
+            }
+
+            // 存储当前数值和索引
+            numIndexMap.put(currentNum, i);
         }
+
         throw new IllegalArgumentException("No two sum solution");
     }
 }

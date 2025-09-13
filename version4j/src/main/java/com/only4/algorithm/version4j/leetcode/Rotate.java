@@ -5,52 +5,54 @@ package com.only4.algorithm.version4j.leetcode;
  */
 public class Rotate {
     public void rotate(int[] nums, int k) {
-        if (nums.length == 1) return;
-        int boundary = nums.length - (k % nums.length);
-        // 0, boundary - 1
-        // boundary, nums.length -1
+        int n = nums.length;
+        k = k % n; // 避免无效轮转
 
-        int LL = 0, LR = boundary - 1;
-        int RL = boundary, RR = nums.length - 1;
+        if (k == 0) return;
 
-        while (LL < LR) {
-            int temp = nums[LL];
-            nums[LL++] = nums[LR];
-            nums[LR--] = temp;
-        }
+        // 反转整个数组
+        reverse(nums, 0, n - 1);
+        // 反转前k个元素
+        reverse(nums, 0, k - 1);
+        // 反转后n-k个元素
+        reverse(nums, k, n - 1);
+    }
 
-        while (RL < RR) {
-            int temp = nums[RL];
-            nums[RL++] = nums[RR];
-            nums[RR--] = temp;
-        }
-
-        int L = 0, R = nums.length - 1;
-        while (L < R) {
-            int temp = nums[L];
-            nums[L++] = nums[R];
-            nums[R--] = temp;
+    private void reverse(int[] nums, int start, int end) {
+        while (start < end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
         }
     }
 
     public void rotate(int[][] matrix) {
-        int top = 0, bottom = matrix.length - 1;
-        int left = 0, right = matrix[0].length - 1;
+        int n = matrix.length;
 
-        while (top < bottom) {
-            int steps = right - left;
-            for (int offset = 0; offset < steps; offset++) {
-                int temp = matrix[top][left + offset];
+        // 分层处理，每次处理一个同心圆环
+        for (int layer = 0; layer < n / 2; layer++) {
+            int first = layer;
+            int last = n - 1 - layer;
 
-                matrix[top][left + offset] = matrix[bottom - offset][left];
-                matrix[bottom - offset][left] = matrix[bottom][right - offset];
-                matrix[bottom][right - offset] = matrix[top + offset][right];
-                matrix[top + offset][right] = temp;
+            // 处理当前层的每个位置
+            for (int offset = first; offset < last; offset++) {
+                // 保存top位置的值
+                int temp = matrix[first][offset];
+
+                // left → top
+                matrix[first][offset] = matrix[last - (offset - first)][first];
+
+                // bottom → left
+                matrix[last - (offset - first)][first] = matrix[last][last - (offset - first)];
+
+                // right → bottom
+                matrix[last][last - (offset - first)] = matrix[offset][last];
+
+                // temp(top) → right
+                matrix[offset][last] = temp;
             }
-            top++;
-            bottom--;
-            left++;
-            right--;
         }
     }
 }

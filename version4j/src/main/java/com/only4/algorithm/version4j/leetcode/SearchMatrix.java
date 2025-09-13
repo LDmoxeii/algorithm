@@ -5,18 +5,17 @@ package com.only4.algorithm.version4j.leetcode;
  */
 public class SearchMatrix {
     public boolean searchMatrix(int[][] matrix, int target) {
-        int m = matrix.length;
-        int n = matrix[0].length;
-        int x = 0;
-        int y = n - 1;
-        while (x < m && y > -1) {
-            int source = matrix[x][y];
-            if (source == target) {
+        int row = 0;
+        int col = matrix[0].length - 1;
+
+        while (row < matrix.length && col >= 0) {
+            int current = matrix[row][col];
+            if (current == target) {
                 return true;
-            } else if (source < target) {
-                x++;
+            } else if (current > target) {
+                col--;
             } else {
-                y--;
+                row++;
             }
         }
         return false;

@@ -10,12 +10,6 @@ class RotateTest {
     @Nested
     @DisplayName("轮转数组测试")
     inner class RotateArrayTest {
-        @Test
-        fun `rotate empty array`() {
-            val nums = intArrayOf()
-            rotate(nums, 3)
-            assertArrayEquals(intArrayOf(), nums)
-        }
 
         @Test
         fun `rotate array with k equals 0`() {

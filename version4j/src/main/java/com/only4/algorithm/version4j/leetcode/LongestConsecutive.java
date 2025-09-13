@@ -8,21 +8,32 @@ import java.util.Set;
  */
 public class LongestConsecutive {
     public int longestConsecutive(int[] nums) {
-        int result = 0;
+        if (nums.length == 0) return 0;
+
+        // 哈希表存储所有数字，实现O(1)查找
         Set<Integer> numSet = new HashSet<>();
         for (int num : nums) {
             numSet.add(num);
         }
 
-        for (int num : nums) {
-            int current = num;
-            if (numSet.contains(num - 1)) continue;
+        int maxLength = 0;
 
-            while (numSet.contains(++current)) {
+        for (int num : numSet) {
+            // 只检查序列的起点（不存在前驱数字num-1）
+            if (!numSet.contains(num - 1)) {
+                int currentNum = num;
+                int currentLength = 1;
+
+                // 向后查找连续数字
+                while (numSet.contains(currentNum + 1)) {
+                    currentNum++;
+                    currentLength++;
+                }
+
+                maxLength = Math.max(maxLength, currentLength);
             }
-
-            result = Math.max(result, current - num);
         }
-        return result;
+
+        return maxLength;
     }
 }

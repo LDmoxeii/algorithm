@@ -2,51 +2,34 @@ package com.only4.algorithm.version4k.leetcode
 
 import com.only4.algorithm.version4k.extra.ListNode
 
-/**
- * [131. 分割回文串](https://leetcode.com/problems/palindrome-partitioning/)
- *
- * 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串。返回 s 所有可能的分割方案。
- *
- * 解题思路：
- * 使用回溯算法，对于每个位置，有两种选择：
- * 1. 切割，如果切割出的子串是回文串，则将其加入路径，并继续处理剩余部分
- * 2. 不切割，继续向后扩展当前子串
- *
- * 时间复杂度：O(n * 2^n)，其中n是字符串长度
- * 空间复杂度：O(n)，递归调用栈的深度最大为n
- */
 fun partition(s: String): List<List<String>> {
     val result = mutableListOf<List<String>>()
     val path = mutableListOf<String>()
 
-    /**
-     * 回溯函数，用于生成所有可能的分割方案
-     *
-     * @param start 当前考虑的子串的起始位置
-     * @param end 当前考虑的子串的结束位置
-     */
-    fun dfs(start: Int, end: Int) {
-        // 如果已经处理到字符串末尾，将当前路径添加到结果中
-        if (end == s.length) {
+    fun isPalindrome(start: Int, end: Int): Boolean {
+        var left = start
+        var right = end
+        while (left < right) {
+            if (s[left++] != s[right--]) return false
+        }
+        return true
+    }
+
+    fun backtrack(startIndex: Int) {
+        if (startIndex == s.length) {
             result.add(path.toList())
             return
         }
 
-        // 选择不切割，继续扩展当前子串
-        if (end < s.lastIndex) {
-            dfs(start, end + 1)
-        }
-
-        // 选择切割，检查子串是否为回文串
-        val subString = s.substring(start, end + 1)
-        if (subString == subString.reversed()) {
-            path.add(subString)
-            dfs(end + 1, end + 1)
-            path.removeAt(path.lastIndex) // 回溯，移除最后添加的子串
+        for (endIndex in startIndex until s.length) {
+            if (isPalindrome(startIndex, endIndex)) {
+                path.add(s.substring(startIndex, endIndex + 1))
+                backtrack(endIndex + 1)
+                path.removeAt(path.lastIndex)
+            }
         }
     }
-
-    dfs(0, 0)
+    backtrack(0)
     return result
 }
 

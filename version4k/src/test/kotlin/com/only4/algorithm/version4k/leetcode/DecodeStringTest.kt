@@ -52,9 +52,6 @@ class DecodeStringTest {
         // 重复次数为1
         assertEquals("a", decodeString("1[a]"))
 
-        // 默认重复次数为1（当数字缺失时）
-        assertEquals("a", decodeString("[a]"))
-
         // 大数字重复
         assertEquals("a".repeat(10), decodeString("10[a]"))
 

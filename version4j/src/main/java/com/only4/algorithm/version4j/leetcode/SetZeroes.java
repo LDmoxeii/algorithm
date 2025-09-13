@@ -10,25 +10,26 @@ public class SetZeroes {
     public void setZeroes(int[][] matrix) {
         Set<Integer> zeroRows = new HashSet<>();
         Set<Integer> zeroCols = new HashSet<>();
-        int m = matrix.length;
-        int n = matrix[0].length;
-        for (int x = 0; x < m; x++) {
-            for (int y = 0; y < n; y++) {
-                if (matrix[x][y] == 0) {
-                    zeroRows.add(x);
-                    zeroCols.add(y);
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+
+        // 第一次遍历：找出所有包含0的行和列
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (matrix[row][col] == 0) {
+                    zeroRows.add(row);
+                    zeroCols.add(col);
                 }
             }
         }
 
-        for (int x : zeroRows) {
-            int delta = 0;
-            while (delta < n) matrix[x][delta++] = 0;
-        }
-
-        for (int y : zeroCols) {
-            int delta = 0;
-            while (delta < m) matrix[delta++][y] = 0;
+        // 第二次遍历：将对应行和列的元素置为0
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (zeroRows.contains(row) || zeroCols.contains(col)) {
+                    matrix[row][col] = 0;
+                }
+            }
         }
     }
 }

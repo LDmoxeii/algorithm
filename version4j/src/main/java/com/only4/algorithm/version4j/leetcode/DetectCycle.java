@@ -8,22 +8,25 @@ import com.only4.algorithm.version4j.extra.ListNode;
 public class DetectCycle {
     public ListNode detectCycle(ListNode head) {
         if (head == null || head.next == null) return null;
-        ListNode fast = head;
-        ListNode slow = head;
 
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // 第一阶段：检测是否有环
         while (fast != null && fast.next != null) {
-            fast = fast.next.next;
             slow = slow.next;
-            if (fast == slow) break;
+            fast = fast.next.next;
+            if (slow == fast) break;
         }
 
+        // 如果没有环，返回null
         if (fast == null || fast.next == null) return null;
 
+        // 第二阶段：找环的入口
         slow = head;
-
-        while (fast != slow) {
-            fast = fast.next;
+        while (slow != fast) {
             slow = slow.next;
+            fast = fast.next;
         }
 
         return slow;

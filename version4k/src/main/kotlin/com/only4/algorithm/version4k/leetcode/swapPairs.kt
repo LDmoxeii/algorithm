@@ -3,14 +3,18 @@ package com.only4.algorithm.version4k.leetcode
 import com.only4.algorithm.version4k.extra.ListNode
 
 fun swapPairs(head: ListNode?): ListNode? {
+    // 递归终止条件：没有节点或只有一个节点
     if (head?.next == null) return head
 
-    val first = head
-    val second = first.next!!
-    val next = second.next
+    val firstNode = head
+    val secondNode = firstNode.next!!
+    val remainingNodes = secondNode.next
 
-    first.next = swapPairs(next)
-    second.next = first
+    // 递归处理后续节点
+    firstNode.next = swapPairs(remainingNodes)
 
-    return second
+    // 交换当前两个节点
+    secondNode.next = firstNode
+
+    return secondNode
 }

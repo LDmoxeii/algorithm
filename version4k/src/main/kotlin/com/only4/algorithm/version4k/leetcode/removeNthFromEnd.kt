@@ -3,7 +3,6 @@ package com.only4.algorithm.version4k.leetcode
 import com.only4.algorithm.version4k.extra.ListNode
 
 fun removeNthFromEnd(head: ListNode?, n: Int): ListNode? {
-    // 创建哑节点，避免删除头节点的特殊处理
     val dummy = ListNode(-1).apply { next = head }
 
     fun findFromEnd(head: ListNode, k: Int): ListNode {

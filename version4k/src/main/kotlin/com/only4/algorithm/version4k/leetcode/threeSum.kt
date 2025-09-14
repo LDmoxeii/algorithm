@@ -36,7 +36,6 @@ fun threeSum(nums: IntArray): List<List<Int>> {
                         right--
                     } while (left < right && nums[right] == nums[right + 1])
                 }
-
                 sum < 0 -> left++  // 和太小，左指针右移
                 else -> right--    // 和太大，右指针左移
             }

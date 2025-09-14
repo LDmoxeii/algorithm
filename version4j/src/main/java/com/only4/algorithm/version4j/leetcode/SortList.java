@@ -6,38 +6,43 @@ public class SortList {
     public ListNode sortList(ListNode head) {
         if (head == null || head.next == null) return head;
 
-        ListNode slow = head;
-        ListNode fast = head.next;
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
+        ListNode middleNode = findMiddleAndSplit(head);
+        ListNode leftSorted = sortList(head);
+        ListNode rightSorted = sortList(middleNode);
 
-        ListNode mid = slow.next;
-        slow.next = null;
-
-        ListNode left = sortList(head);
-        ListNode right = sortList(mid);
-
-        return mergeTwoLists(left, right);
+        return mergeTwoSortedLists(leftSorted, rightSorted);
     }
 
-    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        ListNode dummy = new ListNode(0);
-        ListNode current = dummy;
+    private ListNode findMiddleAndSplit(ListNode head) {
+        ListNode slowPointer = head;
+        ListNode fastPointer = head.next;
 
-        while (l1 != null && l2 != null) {
-            if (l1.val <= l2.val) {
-                current.next = l1;
-                l1 = l1.next;
-            } else {
-                current.next = l2;
-                l2 = l2.next;
-            }
-            current = current.next;
+        while (fastPointer != null && fastPointer.next != null) {
+            slowPointer = slowPointer.next;
+            fastPointer = fastPointer.next.next;
         }
 
-        current.next = (l1 != null) ? l1 : l2;
-        return dummy.next;
+        ListNode middleNode = slowPointer.next;
+        slowPointer.next = null; // 分割链表
+        return middleNode;
+    }
+
+    private ListNode mergeTwoSortedLists(ListNode firstList, ListNode secondList) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode currentNode = dummyHead;
+
+        while (firstList != null && secondList != null) {
+            if (firstList.val <= secondList.val) {
+                currentNode.next = firstList;
+                firstList = firstList.next;
+            } else {
+                currentNode.next = secondList;
+                secondList = secondList.next;
+            }
+            currentNode = currentNode.next;
+        }
+
+        currentNode.next = (firstList != null) ? firstList : secondList;
+        return dummyHead.next;
     }
 }

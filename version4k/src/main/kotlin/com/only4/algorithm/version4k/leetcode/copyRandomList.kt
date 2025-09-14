@@ -11,35 +11,36 @@ class Node(var `val`: Int) {
 fun copyRandomList(head: Node?): Node? {
     head ?: return null
 
-    // 步骤1：在每个原节点后创建一个新节点
-    var current = head
-    while (current != null) {
-        val copyNode = Node(current.`val`).apply {
-            next = current.next
+    fun createCopyNodes() {
+        var current: Node? = head
+        while (current != null) {
+            val copyNode = Node(current.`val`)
+            copyNode.next = current.next
+            current.next = copyNode
+            current = copyNode.next
         }
-
-        val next = current.next
-        current.next = copyNode
-        current = next
     }
 
-    // 步骤2：处理随机指针
-    current = head
-    while (current != null) {
-        current.next!!.random = current.random?.next
-        current = current.next!!.next
+    fun assignRandomPointers() {
+        var current: Node? = head
+        while (current != null) {
+            current.next?.random = current.random?.next
+            current = current.next?.next
+        }
     }
 
-    // 步骤3：分离原链表和复制链表
-    val dummyHead = Node(0).apply { next = head.next }
-    current = head
-
-    while (current != null) {
-        val copyNode = current.next
-        current.next = copyNode?.next
-        copyNode?.next = copyNode?.next?.next
-        current = current.next
+    fun separateLists(): Node? {
+        val copyHead = head.next
+        var current: Node? = head
+        while (current?.next != null) {
+            val temp = current.next
+            current.next = current.next?.next
+            current = temp
+        }
+        return copyHead
     }
 
-    return dummyHead.next
+    createCopyNodes()
+    assignRandomPointers()
+    return separateLists()
 }

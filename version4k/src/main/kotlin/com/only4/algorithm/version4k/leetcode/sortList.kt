@@ -3,46 +3,46 @@ package com.only4.algorithm.version4k.leetcode
 import com.only4.algorithm.version4k.extra.ListNode
 
 fun sortList(head: ListNode?): ListNode? {
-    head?.next ?: return head
+    if (head?.next == null) return head
 
-    fun findMiddle(head: ListNode): ListNode {
-        var slow = head
-        var fast = head.next
+    fun findMiddleAndSplit(head: ListNode): ListNode {
+        var slowPointer = head
+        var fastPointer = head.next
 
-        while (fast?.next != null) {
-            slow = slow.next!!
-            fast = fast.next?.next
+        while (fastPointer?.next != null) {
+            slowPointer = slowPointer.next!!
+            fastPointer = fastPointer.next?.next
         }
 
-        val mid = slow.next!!
-        slow.next = null
-        return mid
+        val middleNode = slowPointer.next!!
+        slowPointer.next = null // 分割链表
+        return middleNode
     }
 
-    fun merge(l1: ListNode?, l2: ListNode?): ListNode? {
-        val dummy = ListNode(0)
-        var current = dummy
-        var left = l1
-        var right = l2
+    fun mergeTwoSortedLists(firstList: ListNode?, secondList: ListNode?): ListNode? {
+        val dummyHead = ListNode(0)
+        var currentNode = dummyHead
+        var leftPointer = firstList
+        var rightPointer = secondList
 
-        while (left != null && right != null) {
-            if (left.`val` <= right.`val`) {
-                current.next = left
-                left = left.next
+        while (leftPointer != null && rightPointer != null) {
+            if (leftPointer.`val` <= rightPointer.`val`) {
+                currentNode.next = leftPointer
+                leftPointer = leftPointer.next
             } else {
-                current.next = right
-                right = right.next
+                currentNode.next = rightPointer
+                rightPointer = rightPointer.next
             }
-            current = current.next!!
+            currentNode = currentNode.next!!
         }
 
-        current.next = left ?: right
-        return dummy.next
+        currentNode.next = leftPointer ?: rightPointer
+        return dummyHead.next
     }
 
-    val mid = findMiddle(head)
-    val left = sortList(head)
-    val right = sortList(mid)
+    val middleNode = findMiddleAndSplit(head)
+    val leftSorted = sortList(head)
+    val rightSorted = sortList(middleNode)
 
-    return merge(left, right)
+    return mergeTwoSortedLists(leftSorted, rightSorted)
 }

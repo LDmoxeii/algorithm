@@ -11,17 +11,11 @@ public class IsPalindrome {
             return true;
         }
 
-        // 使用快慢指针找到链表中点
-        ListNode slow = head;
-        ListNode fast = head;
-
-        while (fast.next != null && fast.next.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
+        // 找到链表的中点
+        ListNode middle = findMiddle(head);
 
         // 反转后半部分链表
-        ListNode secondHalf = reverseList(slow.next);
+        ListNode secondHalf = reverseList(middle.next);
         ListNode secondHalfHead = secondHalf; // 保存用于恢复
 
         // 比较前半部分和反转后的后半部分
@@ -38,9 +32,21 @@ public class IsPalindrome {
         }
 
         // 可选：恢复链表原始结构
-        // slow.next = reverseList(secondHalfHead);
+        // middle.next = reverseList(secondHalfHead);
 
         return isPalindrome;
+    }
+
+    private ListNode findMiddle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow;
     }
 
     private ListNode reverseList(ListNode head) {

@@ -5,28 +5,31 @@ import com.only4.algorithm.version4j.extra.ListNode;
 import java.util.PriorityQueue;
 
 public class MergeKLists {
-    public ListNode mergeKLists(ListNode[] lists) {
-        if (lists.length == 0) return null;
+    public ListNode mergeKLists(ListNode[] sortedLists) {
+        if (sortedLists.length == 0) return null;
 
-        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
+        PriorityQueue<ListNode> minHeap = new PriorityQueue<>((firstNode, secondNode) -> firstNode.val - secondNode.val);
 
-        for (ListNode list : lists) {
-            if (list != null) pq.offer(list);
+        // 将所有链表的头节点加入最小堆
+        for (ListNode listHead : sortedLists) {
+            if (listHead != null) minHeap.offer(listHead);
         }
 
-        ListNode dummy = new ListNode(0);
-        ListNode current = dummy;
+        ListNode dummyHead = new ListNode(0);
+        ListNode currentNode = dummyHead;
 
-        while (!pq.isEmpty()) {
-            ListNode node = pq.poll();
-            current.next = node;
-            current = current.next;
+        // 不断从堆中取出最小节点构建结果链表
+        while (!minHeap.isEmpty()) {
+            ListNode smallestNode = minHeap.poll();
+            currentNode.next = smallestNode;
+            currentNode = currentNode.next;
 
-            if (node.next != null) {
-                pq.offer(node.next);
+            // 如果取出的节点有后继节点，将其加入堆中
+            if (smallestNode.next != null) {
+                minHeap.offer(smallestNode.next);
             }
         }
 
-        return dummy.next;
+        return dummyHead.next;
     }
 }

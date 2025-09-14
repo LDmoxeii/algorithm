@@ -6,26 +6,28 @@ fun rightSideView(root: TreeNode?): List<Int> {
     // 处理空树情况
     root ?: return emptyList()
 
-    // 使用双端队列存储当前层的节点，初始时添加根节点
-    val queue = ArrayDeque<TreeNode>().apply { addFirst(root) }
-    val result = mutableListOf<Int>()
+    // 使用双端队列进行层序遍历
+    val levelQueue = ArrayDeque<TreeNode>().apply { add(root) }
+    val rightViewResult = mutableListOf<Int>()
 
     // 逐层遍历二叉树
-    while (queue.isNotEmpty()) {
-        // 记录当前层最右侧节点的值（从右侧看到的节点）
-        result.add(queue.first().`val`)
+    while (levelQueue.isNotEmpty()) {
+        val currentLevelSize = levelQueue.size
 
         // 遍历当前层的所有节点
-        repeat(queue.size) {
-            // 当前节点出队
-            val node = queue.removeLast()
+        for (nodeIndex in 0 until currentLevelSize) {
+            val currentNode = levelQueue.removeFirst()
 
-            // 按照从左到右的顺序将子节点入队
-            // 注意我们使用addFirst，这样队首就是最右侧的节点
-            node.left?.let { queue.addFirst(it) }
-            node.right?.let { queue.addFirst(it) }
+            // 记录每层最右侧节点的值（第一个处理的节点）
+            if (nodeIndex == 0) {
+                rightViewResult.add(currentNode.`val`)
+            }
+
+            // 先添加右子节点，再添加左子节点（确保右节点优先处理）
+            currentNode.right?.let { levelQueue.add(it) }
+            currentNode.left?.let { levelQueue.add(it) }
         }
     }
 
-    return result
+    return rightViewResult
 }

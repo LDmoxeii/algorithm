@@ -2,44 +2,60 @@ package com.only4.algorithm.version4j.leetcode;
 
 public class NumIslands {
 
-    private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    // 四个方向：上、下、右、左（用于DFS遍历相邻陆地）
+    private static final int[][] LAND_EXPLORATION_DIRECTIONS = {
+            {-1, 0}, {1, 0}, {0, 1}, {0, -1}
+    };
 
-    public int numIslands(char[][] grid) {
-        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+    public int numIslands(char[][] oceanGrid) {
+        if (oceanGrid == null || oceanGrid.length == 0 || oceanGrid[0].length == 0) {
             return 0;
         }
 
-        int islandCount = 0;
-        int rows = grid.length;
-        int cols = grid[0].length;
+        int discoveredIslandCount = 0;
+        int totalRows = oceanGrid.length;
+        int totalCols = oceanGrid[0].length;
 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                if (grid[row][col] == '1') {
-                    markIslandAsVisited(grid, row, col);
-                    islandCount++;
+        // 遍历海洋网格中的每个位置
+        for (int currentRow = 0; currentRow < totalRows; currentRow++) {
+            for (int currentCol = 0; currentCol < totalCols; currentCol++) {
+                // 发现新的未探索陆地，开始岛屿探索
+                if (oceanGrid[currentRow][currentCol] == '1') {
+                    exploreAndMarkEntireIsland(oceanGrid, currentRow, currentCol);
+                    discoveredIslandCount++;
                 }
             }
         }
 
-        return islandCount;
+        return discoveredIslandCount;
     }
 
-    private void markIslandAsVisited(char[][] grid, int row, int col) {
-        if (!isValidPosition(grid, row, col) || grid[row][col] == '0') {
+    /**
+     * 深度优先搜索：探索并标记整个岛屿的所有连通陆地
+     * 将已访问的陆地标记为水('0')以避免重复计算
+     */
+    private void exploreAndMarkEntireIsland(char[][] oceanGrid, int landRow, int landCol) {
+        // 边界检查：超出网格范围或已经是水域
+        if (!isValidGridPosition(oceanGrid, landRow, landCol) || oceanGrid[landRow][landCol] == '0') {
             return;
         }
 
-        grid[row][col] = '0';
+        // 将当前陆地标记为已访问（沉没为水域）
+        oceanGrid[landRow][landCol] = '0';
 
-        for (int[] direction : DIRECTIONS) {
-            int newRow = row + direction[0];
-            int newCol = col + direction[1];
-            markIslandAsVisited(grid, newRow, newCol);
+        // 向四个方向继续探索连通的陆地
+        for (int[] explorationDirection : LAND_EXPLORATION_DIRECTIONS) {
+            int neighborRow = landRow + explorationDirection[0];
+            int neighborCol = landCol + explorationDirection[1];
+            exploreAndMarkEntireIsland(oceanGrid, neighborRow, neighborCol);
         }
     }
 
-    private boolean isValidPosition(char[][] grid, int row, int col) {
-        return row >= 0 && row < grid.length && col >= 0 && col < grid[0].length;
+    /**
+     * 检查给定坐标是否在网格的有效范围内
+     */
+    private boolean isValidGridPosition(char[][] oceanGrid, int targetRow, int targetCol) {
+        return targetRow >= 0 && targetRow < oceanGrid.length &&
+                targetCol >= 0 && targetCol < oceanGrid[0].length;
     }
 }

@@ -3,33 +3,33 @@ package com.only4.algorithm.version4k.leetcode
 import com.only4.algorithm.version4k.extra.TreeNode
 
 fun pathSum(root: TreeNode?, targetSum: Int): Int {
-    // 用于存储前缀和及其出现次数
-    val prefixSumCount = HashMap<Long, Int>()
-    // 初始化前缀和为0的情况，出现1次
-    prefixSumCount[0L] = 1
+    // 初始化前缀和哈希表，前缀和为0的出现次数为1
+    val prefixSumFrequency = mutableMapOf<Long, Int>()
+    prefixSumFrequency[0L] = 1
 
-    fun dfs(node: TreeNode?, currentSum: Long, target: Long): Int {
-        if (node == null) return 0
+    fun countPathsWithTargetSum(currentNode: TreeNode?, currentPrefixSum: Long): Int {
+        // 边界条件：节点为空
+        if (currentNode == null) return 0
 
-        // 当前路径上的前缀和
-        val newSum = currentSum + node.`val`
-        // 需要查找的前缀和，如果存在则说明有路径和为targetSum
-        val complement = newSum - target
+        // 计算当前路径的前缀和
+        val newPrefixSum = currentPrefixSum + currentNode.`val`
 
-        // 获取符合要求的路径数量
-        val pathCount = prefixSumCount.getOrDefault(complement, 0)
+        // 查找符合要求的路径数量：当前前缀和 - 目标值 = 需要查找的前缀和
+        val targetPrefixSum = newPrefixSum - targetSum
+        val validPathCount = prefixSumFrequency.getOrDefault(targetPrefixSum, 0)
 
-        // 更新当前前缀和的出现次数
-        prefixSumCount[newSum] = prefixSumCount.getOrDefault(newSum, 0) + 1
+        // 将当前前缀和加入哈希表
+        prefixSumFrequency[newPrefixSum] = prefixSumFrequency.getOrDefault(newPrefixSum, 0) + 1
 
         // 递归处理左右子树
-        val totalPaths = pathCount + dfs(node.left, newSum, target) + dfs(node.right, newSum, target)
+        val leftSubtreePaths = countPathsWithTargetSum(currentNode.left, newPrefixSum)
+        val rightSubtreePaths = countPathsWithTargetSum(currentNode.right, newPrefixSum)
 
-        // 回溯，恢复状态，移除当前节点的前缀和记录
-        prefixSumCount[newSum] = prefixSumCount.getOrDefault(newSum, 0) - 1
+        // 回溯：移除当前节点的前缀和记录（恢复状态）
+        prefixSumFrequency[newPrefixSum] = prefixSumFrequency.getOrDefault(newPrefixSum, 0) - 1
 
-        return totalPaths
+        return validPathCount + leftSubtreePaths + rightSubtreePaths
     }
 
-    return dfs(root, 0, targetSum.toLong())
+    return countPathsWithTargetSum(root, 0L)
 }

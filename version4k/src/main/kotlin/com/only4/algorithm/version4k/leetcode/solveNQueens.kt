@@ -1,55 +1,61 @@
 package com.only4.algorithm.version4k.leetcode
 
-fun solveNQueens(n: Int): List<List<String>> {
-    val result = mutableListOf<List<String>>()
-    val board = MutableList(n) { ".".repeat(n) }
+fun solveNQueens(chessboardSize: Int): List<List<String>> {
+    val allValidSolutions = mutableListOf<List<String>>()
+    val chessboard = MutableList(chessboardSize) { ".".repeat(chessboardSize) }
 
-    fun isValidPosition(row: Int, col: Int): Boolean {
-        for (i in 0 until row) {
-            if (board[i][col] == 'Q') return false
-        }
+    // 优化冲突检测：预计算冲突数组
+    val occupiedColumns = BooleanArray(chessboardSize)
+    val occupiedMainDiagonals = BooleanArray(2 * chessboardSize - 1)
+    val occupiedAntiDiagonals = BooleanArray(2 * chessboardSize - 1)
 
-        var r = row - 1
-        var c = col + 1
-        while (r >= 0 && c < n) {
-            if (board[r][c] == 'Q') return false
-            r--
-            c++
-        }
-
-        r = row - 1
-        c = col - 1
-        while (r >= 0 && c >= 0) {
-            if (board[r][c] == 'Q') return false
-            r--
-            c--
-        }
-
-        return true
-    }
-
-    fun backtrack(row: Int) {
-        if (row == n) {
-            result.add(board.toList())
+    /**
+     * 使用回溯算法递归寻找所有有效的皇后放置方案
+     * @param currentRow 当前处理的行
+     */
+    fun findAllQueenPlacementsByBacktracking(currentRow: Int) {
+        // 所有皇后都已成功放置，保存当前解决方案
+        if (currentRow == chessboardSize) {
+            allValidSolutions.add(chessboard.toList())
             return
         }
 
-        for (col in 0 until n) {
-            if (!isValidPosition(row, col)) continue
+        // 尝试在当前行的每一列放置皇后
+        for (candidateColumn in 0 until chessboardSize) {
+            val mainDiagonalIndex = currentRow + candidateColumn
+            val antiDiagonalIndex = currentRow - candidateColumn + chessboardSize - 1
 
-            val newRow = StringBuilder(board[row]).apply {
-                setCharAt(col, 'Q')
+            // 检查是否与已放置的皇后冲突
+            if (occupiedColumns[candidateColumn] ||
+                occupiedMainDiagonals[mainDiagonalIndex] ||
+                occupiedAntiDiagonals[antiDiagonalIndex]
+            ) {
+                continue
+            }
+
+            // 放置皇后并标记冲突区域
+            val rowWithQueen = StringBuilder(chessboard[currentRow]).apply {
+                setCharAt(candidateColumn, 'Q')
             }.toString()
-            board[row] = newRow
+            chessboard[currentRow] = rowWithQueen
+            occupiedColumns[candidateColumn] = true
+            occupiedMainDiagonals[mainDiagonalIndex] = true
+            occupiedAntiDiagonals[antiDiagonalIndex] = true
 
-            backtrack(row + 1)
+            // 递归处理下一行
+            findAllQueenPlacementsByBacktracking(currentRow + 1)
 
-            val resetRow = StringBuilder(board[row]).apply {
-                setCharAt(col, '.')
+            // 回溯：移除皇后并解除标记
+            val rowWithoutQueen = StringBuilder(chessboard[currentRow]).apply {
+                setCharAt(candidateColumn, '.')
             }.toString()
-            board[row] = resetRow
+            chessboard[currentRow] = rowWithoutQueen
+            occupiedColumns[candidateColumn] = false
+            occupiedMainDiagonals[mainDiagonalIndex] = false
+            occupiedAntiDiagonals[antiDiagonalIndex] = false
         }
     }
-    backtrack(0)
-    return result
+
+    findAllQueenPlacementsByBacktracking(0)
+    return allValidSolutions
 }

@@ -10,29 +10,38 @@ import java.util.Map;
  */
 public class PathSum {
     public int pathSum(TreeNode root, int targetSum) {
-        Map<Long, Integer> prefixSumCount = new HashMap<>();
-        prefixSumCount.put(0L, 1);
-        return dfs(root, 0L, targetSum, prefixSumCount);
+        // 初始化前缀和哈希表，前缀和为0的出现次数为1
+        Map<Long, Integer> prefixSumFrequency = new HashMap<>();
+        prefixSumFrequency.put(0L, 1);
+
+        return countPathsWithTargetSum(root, 0L, targetSum, prefixSumFrequency);
     }
 
-    private int dfs(TreeNode node, long currentSum, int targetSum, Map<Long, Integer> prefixSumCount) {
-        if (node == null) return 0;
+    private int countPathsWithTargetSum(TreeNode currentNode, long currentPrefixSum,
+                                        int targetSum, Map<Long, Integer> prefixSumFrequency) {
+        // 边界条件：节点为空
+        if (currentNode == null) return 0;
 
-        currentSum += node.val;
+        // 计算当前路径的前缀和
+        currentPrefixSum += currentNode.val;
 
-        // 查找符合要求的路径数量
-        int pathCount = prefixSumCount.getOrDefault(currentSum - targetSum, 0);
+        // 查找符合要求的路径数量：当前前缀和 - 目标值 = 需要查找的前缀和
+        int validPathCount = prefixSumFrequency.getOrDefault(currentPrefixSum - targetSum, 0);
 
-        // 更新当前前缀和的出现次数
-        prefixSumCount.merge(currentSum, 1, Integer::sum);
+        // 将当前前缀和加入哈希表
+        prefixSumFrequency.put(currentPrefixSum,
+                prefixSumFrequency.getOrDefault(currentPrefixSum, 0) + 1);
 
         // 递归处理左右子树
-        int totalPaths = pathCount + dfs(node.left, currentSum, targetSum, prefixSumCount)
-                + dfs(node.right, currentSum, targetSum, prefixSumCount);
+        int leftSubtreePaths = countPathsWithTargetSum(currentNode.left, currentPrefixSum,
+                targetSum, prefixSumFrequency);
+        int rightSubtreePaths = countPathsWithTargetSum(currentNode.right, currentPrefixSum,
+                targetSum, prefixSumFrequency);
 
-        // 回溯，恢复状态
-        prefixSumCount.merge(currentSum, -1, Integer::sum);
+        // 回溯：移除当前节点的前缀和记录（恢复状态）
+        prefixSumFrequency.put(currentPrefixSum,
+                prefixSumFrequency.get(currentPrefixSum) - 1);
 
-        return totalPaths;
+        return validPathCount + leftSubtreePaths + rightSubtreePaths;
     }
 }

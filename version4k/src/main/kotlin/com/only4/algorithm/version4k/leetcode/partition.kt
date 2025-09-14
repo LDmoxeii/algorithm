@@ -2,35 +2,57 @@ package com.only4.algorithm.version4k.leetcode
 
 import com.only4.algorithm.version4k.extra.ListNode
 
-fun partition(s: String): List<List<String>> {
-    val result = mutableListOf<List<String>>()
-    val path = mutableListOf<String>()
+fun partition(originalString: String): List<List<String>> {
+    val allPalindromePartitions = mutableListOf<List<String>>()
+    val currentPartitionPath = mutableListOf<String>()
 
-    fun isPalindrome(start: Int, end: Int): Boolean {
-        var left = start
-        var right = end
-        while (left < right) {
-            if (s[left++] != s[right--]) return false
+    /**
+     * 检查字符串指定范围内的子串是否为回文串
+     * @param leftBoundary 子串的左边界索引（包含）
+     * @param rightBoundary 子串的右边界索引（包含）
+     * @return 指定子串是否为回文串
+     */
+    fun isSubstringPalindrome(leftBoundary: Int, rightBoundary: Int): Boolean {
+        var leftPointer = leftBoundary
+        var rightPointer = rightBoundary
+        while (leftPointer < rightPointer) {
+            if (originalString[leftPointer++] != originalString[rightPointer--]) {
+                return false
+            }
         }
         return true
     }
 
-    fun backtrack(startIndex: Int) {
-        if (startIndex == s.length) {
-            result.add(path.toList())
+    /**
+     * 使用回溯算法寻找所有可能的回文串分割方案
+     * @param currentSplitStartIndex 当前分割的起始位置索引
+     */
+    fun findAllPalindromePartitionsWithBacktracking(currentSplitStartIndex: Int) {
+        // 终止条件：已经处理完整个字符串，找到一个完整的回文分割方案
+        if (currentSplitStartIndex == originalString.length) {
+            allPalindromePartitions.add(currentPartitionPath.toList())
             return
         }
 
-        for (endIndex in startIndex until s.length) {
-            if (isPalindrome(startIndex, endIndex)) {
-                path.add(s.substring(startIndex, endIndex + 1))
-                backtrack(endIndex + 1)
-                path.removeAt(path.lastIndex)
+        // 尝试从当前起始位置到字符串末尾的每个可能的结束位置
+        for (candidateEndIndex in currentSplitStartIndex until originalString.length) {
+            // 检查当前候选子串是否为回文串
+            if (isSubstringPalindrome(currentSplitStartIndex, candidateEndIndex)) {
+                // 选择：将回文子串添加到当前分割路径
+                val palindromeSubstring = originalString.substring(currentSplitStartIndex, candidateEndIndex + 1)
+                currentPartitionPath.add(palindromeSubstring)
+
+                // 递归：继续分割剩余字符串
+                findAllPalindromePartitionsWithBacktracking(candidateEndIndex + 1)
+
+                // 回溯：移除刚添加的子串，尝试其他分割可能性
+                currentPartitionPath.removeAt(currentPartitionPath.lastIndex)
             }
         }
     }
-    backtrack(0)
-    return result
+
+    findAllPalindromePartitionsWithBacktracking(0)  // 从字符串的第0个位置开始分割
+    return allPalindromePartitions
 }
 
 /**

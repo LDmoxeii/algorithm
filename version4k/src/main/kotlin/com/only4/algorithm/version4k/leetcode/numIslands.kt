@@ -1,33 +1,51 @@
 package com.only4.algorithm.version4k.leetcode
 
-fun numIslands(grid: Array<CharArray>): Int {
-    if (grid.isEmpty() || grid[0].isEmpty()) return 0
+fun numIslands(oceanGrid: Array<CharArray>): Int {
+    if (oceanGrid.isEmpty() || oceanGrid[0].isEmpty()) return 0
 
-    val rows = grid.size
-    val cols = grid[0].size
-    val directions = arrayOf(Pair(-1, 0), Pair(1, 0), Pair(0, -1), Pair(0, 1))
-    var islandCount = 0
+    val totalRows = oceanGrid.size
+    val totalCols = oceanGrid[0].size
 
-    fun isValidPosition(row: Int, col: Int) = row in 0 until rows && col in 0 until cols
+    // 四个方向的探索向量：上、下、左、右
+    val landExplorationDirections = arrayOf(
+        Pair(-1, 0), Pair(1, 0), Pair(0, -1), Pair(0, 1)
+    )
 
-    fun markIslandAsVisited(row: Int, col: Int) {
-        if (!isValidPosition(row, col) || grid[row][col] != '1') return
+    var discoveredIslandCount = 0
 
-        grid[row][col] = '0'
+    /**
+     * 检查给定坐标是否在海洋网格的有效范围内
+     */
+    fun isValidGridPosition(targetRow: Int, targetCol: Int): Boolean =
+        targetRow in 0 until totalRows && targetCol in 0 until totalCols
 
-        directions.forEach { (deltaRow, deltaCol) ->
-            markIslandAsVisited(row + deltaRow, col + deltaCol)
+    /**
+     * 深度优先搜索：探索并标记整个岛屿的所有连通陆地
+     */
+    fun exploreAndMarkEntireIsland(landRow: Int, landCol: Int) {
+        // 边界检查和水域检查
+        if (!isValidGridPosition(landRow, landCol) || oceanGrid[landRow][landCol] != '1') {
+            return
+        }
+
+        // 将当前陆地标记为已访问（沉没为水域）
+        oceanGrid[landRow][landCol] = '0'
+
+        // 向四个方向继续探索连通的陆地
+        landExplorationDirections.forEach { (rowDelta, colDelta) ->
+            exploreAndMarkEntireIsland(landRow + rowDelta, landCol + colDelta)
         }
     }
 
-    for (row in 0 until rows) {
-        for (col in 0 until cols) {
-            if (grid[row][col] == '1') {
-                islandCount++
-                markIslandAsVisited(row, col)
+    // 遍历海洋网格寻找未探索的岛屿
+    for (currentRow in 0 until totalRows) {
+        for (currentCol in 0 until totalCols) {
+            if (oceanGrid[currentRow][currentCol] == '1') {
+                discoveredIslandCount++
+                exploreAndMarkEntireIsland(currentRow, currentCol)
             }
         }
     }
 
-    return islandCount
+    return discoveredIslandCount
 }

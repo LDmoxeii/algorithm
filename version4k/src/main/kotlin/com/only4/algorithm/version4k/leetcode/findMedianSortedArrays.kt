@@ -1,33 +1,38 @@
 package com.only4.algorithm.version4k.leetcode
 
-fun findMedianSortedArrays(nums1: IntArray, nums2: IntArray): Double {
-    val totalLength = nums1.size + nums2.size
-    val mergedArray = IntArray(totalLength)
+fun findMedianSortedArrays(a: IntArray, b: IntArray): Double {
+    // 确保 a 是较短的数组
+    val (shorter, longer) = if (a.size > b.size) b to a else a to b
 
-    var index = 0
-    var p1 = 0
-    var p2 = 0
+    val m = shorter.size
+    val n = longer.size
 
-    // 同时遍历两个数组，按顺序合并
-    while (p1 < nums1.size && p2 < nums2.size) {
-        mergedArray[index++] = if (nums1[p1] < nums2[p2]) nums1[p1++] else nums2[p2++]
+    // 使用二分搜索找到正确的分割点
+    var left = -1
+    var right = m
+
+    while (left + 1 < right) {
+        val i = (left + right) / 2
+        val j = (m + n + 1) / 2 - i - 2
+
+        if (shorter[i] <= longer[j + 1]) {
+            left = i
+        } else {
+            right = i
+        }
     }
 
-    // 处理剩余元素
-    while (p1 < nums1.size) {
-        mergedArray[index++] = nums1[p1++]
-    }
+    // 计算最终结果
+    val i = left
+    val j = (m + n + 1) / 2 - i - 2
 
-    while (p2 < nums2.size) {
-        mergedArray[index++] = nums2[p2++]
-    }
+    val ai = shorter.getOrElse(i) { Int.MIN_VALUE }
+    val bj = longer.getOrElse(j) { Int.MIN_VALUE }
+    val ai1 = shorter.getOrElse(i + 1) { Int.MAX_VALUE }
+    val bj1 = longer.getOrElse(j + 1) { Int.MAX_VALUE }
 
-    // 计算中位数
-    return if (totalLength % 2 == 0) {
-        // 偶数长度，取中间两个数的平均值
-        (mergedArray[totalLength / 2] + mergedArray[totalLength / 2 - 1]) / 2.0
-    } else {
-        // 奇数长度，取中间的数
-        mergedArray[totalLength / 2].toDouble()
-    }
+    val max1 = maxOf(ai, bj)
+    val min2 = minOf(ai1, bj1)
+
+    return if ((m + n) % 2 > 0) max1.toDouble() else (max1 + min2) / 2.0
 }

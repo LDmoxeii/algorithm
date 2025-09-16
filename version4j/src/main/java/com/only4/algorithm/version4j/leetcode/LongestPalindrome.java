@@ -2,38 +2,47 @@ package com.only4.algorithm.version4j.leetcode;
 
 public class LongestPalindrome {
     public String longestPalindrome(String s) {
-        int n = s.length();
-        if (n < 2) return s;
+        int stringLength = s.length();
+        if (stringLength < 2) return s;
 
-        boolean[][] dp = new boolean[n][n];
-        int start = 0;
-        int maxLen = 1;
+        // isPalindrome[leftIndex][rightIndex] 表示子串 s[leftIndex...rightIndex] 是否为回文串
+        boolean[][] isPalindrome = new boolean[stringLength][stringLength];
+        int longestPalindromeStart = 0;
+        int longestPalindromeLength = 1;
 
-        for (int i = 0; i < n; i++) {
-            dp[i][i] = true;
+        // 初始化长度为1的子串（单个字符必然是回文）
+        for (int charIndex = 0; charIndex < stringLength; charIndex++) {
+            isPalindrome[charIndex][charIndex] = true;
         }
 
-        for (int i = 0; i < n - 1; i++) {
-            if (s.charAt(i) == s.charAt(i + 1)) {
-                dp[i][i + 1] = true;
-                start = i;
-                maxLen = 2;
+        // 检查长度为2的子串
+        for (int leftIndex = 0; leftIndex < stringLength - 1; leftIndex++) {
+            int rightIndex = leftIndex + 1;
+            if (s.charAt(leftIndex) == s.charAt(rightIndex)) {
+                isPalindrome[leftIndex][rightIndex] = true;
+                longestPalindromeStart = leftIndex;
+                longestPalindromeLength = 2;
             }
         }
 
-        for (int len = 3; len <= n; len++) {
-            for (int i = 0; i <= n - len; i++) {
-                int j = i + len - 1;
-                if (s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1]) {
-                    dp[i][j] = true;
-                    if (len > maxLen) {
-                        start = i;
-                        maxLen = len;
+        // 检查长度为3及以上的子串
+        for (int currentSubstringLength = 3; currentSubstringLength <= stringLength; currentSubstringLength++) {
+            for (int leftIndex = 0; leftIndex <= stringLength - currentSubstringLength; leftIndex++) {
+                int rightIndex = leftIndex + currentSubstringLength - 1;
+                char leftChar = s.charAt(leftIndex);
+                char rightChar = s.charAt(rightIndex);
+                boolean innerSubstringIsPalindrome = isPalindrome[leftIndex + 1][rightIndex - 1];
+
+                if (leftChar == rightChar && innerSubstringIsPalindrome) {
+                    isPalindrome[leftIndex][rightIndex] = true;
+                    if (currentSubstringLength > longestPalindromeLength) {
+                        longestPalindromeStart = leftIndex;
+                        longestPalindromeLength = currentSubstringLength;
                     }
                 }
             }
         }
 
-        return s.substring(start, start + maxLen);
+        return s.substring(longestPalindromeStart, longestPalindromeStart + longestPalindromeLength);
     }
 }

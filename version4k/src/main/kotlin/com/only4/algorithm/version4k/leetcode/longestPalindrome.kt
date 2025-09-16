@@ -1,37 +1,46 @@
 package com.only4.algorithm.version4k.leetcode
 
 fun longestPalindrome(s: String): String {
-    val n = s.length
-    if (n < 2) return s
+    val stringLength = s.length
+    if (stringLength < 2) return s
 
-    val dp = Array(n) { BooleanArray(n) }
-    var start = 0
-    var maxLen = 1
+    // isPalindrome[leftIndex][rightIndex] 表示子串 s[leftIndex...rightIndex] 是否为回文串
+    val isPalindrome = Array(stringLength) { BooleanArray(stringLength) }
+    var longestPalindromeStart = 0
+    var longestPalindromeLength = 1
 
-    for (i in 0 until n) {
-        dp[i][i] = true
+    // 初始化长度为1的子串（单个字符必然是回文）
+    for (charIndex in 0 until stringLength) {
+        isPalindrome[charIndex][charIndex] = true
     }
 
-    for (i in 0 until n - 1) {
-        if (s[i] == s[i + 1]) {
-            dp[i][i + 1] = true
-            start = i
-            maxLen = 2
+    // 检查长度为2的子串
+    for (leftIndex in 0 until stringLength - 1) {
+        val rightIndex = leftIndex + 1
+        if (s[leftIndex] == s[rightIndex]) {
+            isPalindrome[leftIndex][rightIndex] = true
+            longestPalindromeStart = leftIndex
+            longestPalindromeLength = 2
         }
     }
 
-    for (len in 3..n) {
-        for (i in 0..n - len) {
-            val j = i + len - 1
-            if (s[i] == s[j] && dp[i + 1][j - 1]) {
-                dp[i][j] = true
-                if (len > maxLen) {
-                    start = i
-                    maxLen = len
+    // 检查长度为3及以上的子串
+    for (currentSubstringLength in 3..stringLength) {
+        for (leftIndex in 0..stringLength - currentSubstringLength) {
+            val rightIndex = leftIndex + currentSubstringLength - 1
+            val leftChar = s[leftIndex]
+            val rightChar = s[rightIndex]
+            val innerSubstringIsPalindrome = isPalindrome[leftIndex + 1][rightIndex - 1]
+
+            if (leftChar == rightChar && innerSubstringIsPalindrome) {
+                isPalindrome[leftIndex][rightIndex] = true
+                if (currentSubstringLength > longestPalindromeLength) {
+                    longestPalindromeStart = leftIndex
+                    longestPalindromeLength = currentSubstringLength
                 }
             }
         }
     }
 
-    return s.substring(start, start + maxLen)
+    return s.substring(longestPalindromeStart, longestPalindromeStart + longestPalindromeLength)
 }

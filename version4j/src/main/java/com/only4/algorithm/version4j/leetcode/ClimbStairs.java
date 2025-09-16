@@ -4,21 +4,21 @@ public class ClimbStairs {
     public int climbStairs(int n) {
         if (n <= 2) return n;
 
-        // prev表示到达前两阶的方法数
-        int prev = 1;
-        // curr表示到达前一阶的方法数
-        int curr = 2;
+        // 到达前两阶楼梯的方法数
+        int waysToReachTwoStepsBack = 1;
+        // 到达前一阶楼梯的方法数
+        int waysToReachOneStepBack = 2;
 
-        // 从第3阶开始计算
-        for (int i = 3; i <= n; i++) {
-            // 计算当前阶的方法数
-            int sum = prev + curr;
-            // 更新状态：当前的前一阶变成下一轮的前两阶
-            prev = curr;
-            // 当前阶的方法数变成下一轮的前一阶
-            curr = sum;
+        // 从第3阶开始逐步计算到第n阶
+        for (int currentStair = 3; currentStair <= n; currentStair++) {
+            // 当前阶梯的方法数 = 前一阶的方法数 + 前两阶的方法数
+            int waysToReachCurrentStair = waysToReachOneStepBack + waysToReachTwoStepsBack;
+
+            // 更新状态：为计算下一阶做准备
+            waysToReachTwoStepsBack = waysToReachOneStepBack;
+            waysToReachOneStepBack = waysToReachCurrentStair;
         }
 
-        return curr;
+        return waysToReachOneStepBack;
     }
 }

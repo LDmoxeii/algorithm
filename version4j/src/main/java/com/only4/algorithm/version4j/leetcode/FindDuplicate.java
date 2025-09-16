@@ -3,23 +3,26 @@ package com.only4.algorithm.version4j.leetcode;
 public class FindDuplicate {
     public int findDuplicate(int[] nums) {
         // 使用弗洛伊德判圈法（快慢指针）查找环的入口
-        int slow = nums[0];
-        int fast = nums[0];
+        // 将数组看作链表：index -> nums[index]，重复数字会形成环
+        int slowPointer = nums[0];  // 慢指针（龟）
+        int fastPointer = nums[0];  // 快指针（兔）
 
-        // 第一步：快慢指针相遇，找到环中的一个相遇点
+        // 阶段一：寻找环内相遇点
+        // 快指针每次走两步，慢指针每次走一步，直到相遇
         do {
-            slow = nums[slow];         // 慢指针每次走一步
-            fast = nums[nums[fast]];   // 快指针每次走两步
-        } while (slow != fast);
+            slowPointer = nums[slowPointer];           // 慢指针前进一步
+            fastPointer = nums[nums[fastPointer]];     // 快指针前进两步
+        } while (slowPointer != fastPointer);
 
-        // 第二步：将慢指针重新指向起点，快慢指针同步前进
-        slow = nums[0];
-        while (slow != fast) {
-            slow = nums[slow];
-            fast = nums[fast];
+        // 阶段二：寻找环的入口点（重复数字）
+        // 将慢指针重置到起点，两指针以相同速度前进
+        slowPointer = nums[0];
+        while (slowPointer != fastPointer) {
+            slowPointer = nums[slowPointer];   // 慢指针前进一步
+            fastPointer = nums[fastPointer];   // 快指针也前进一步
         }
 
-        // 相遇点即为重复数字
-        return slow;
+        // 两指针再次相遇的位置就是环的入口，即重复数字
+        return slowPointer;
     }
 }

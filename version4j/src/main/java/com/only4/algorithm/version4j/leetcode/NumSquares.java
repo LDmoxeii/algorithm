@@ -6,29 +6,35 @@ import java.util.List;
 
 public class NumSquares {
     public int numSquares(int n) {
-        // 收集所有小于等于n的完全平方数
-        List<Integer> perfectSquares = new ArrayList<>();
-        int sqrtValue = 1;
-        while (sqrtValue * sqrtValue <= n) {
-            perfectSquares.add(sqrtValue * sqrtValue);
-            sqrtValue++;
+        // 预处理：收集所有小于等于n的完全平方数
+        List<Integer> availablePerfectSquares = new ArrayList<>();
+        int baseNumber = 1;
+        while (baseNumber * baseNumber <= n) {
+            int perfectSquare = baseNumber * baseNumber;
+            availablePerfectSquares.add(perfectSquare);
+            baseNumber++;
         }
 
-        // 创建dp数组，初始值设为最大整数
-        int[] dp = new int[n + 1];
-        Arrays.fill(dp, Integer.MAX_VALUE);
-        dp[0] = 0; // 组成0需要0个完全平方数
+        // 创建DP数组：minSquareCount[i] 表示组成数字i所需的最少完全平方数个数
+        int[] minSquareCount = new int[n + 1];
+        Arrays.fill(minSquareCount, Integer.MAX_VALUE);
+        minSquareCount[0] = 0; // 组成0需要0个完全平方数
 
-        // 对于每个数字，尝试使用每个完全平方数来减少它
-        for (int currentNum = 1; currentNum <= n; currentNum++) {
-            for (int square : perfectSquares) {
-                if (currentNum < square) break; // 完全平方数太大，无法使用
+        // 对于每个目标数字，尝试使用每个可用的完全平方数
+        for (int targetNumber = 1; targetNumber <= n; targetNumber++) {
+            for (int perfectSquare : availablePerfectSquares) {
+                // 如果完全平方数大于目标数字，则无法使用（后续的更大）
+                if (targetNumber < perfectSquare) break;
 
-                // 使用当前完全平方数后，更新dp[currentNum]
-                dp[currentNum] = Math.min(dp[currentNum], dp[currentNum - square] + 1);
+                // 状态转移：使用当前完全平方数后，更新最少个数
+                int countAfterUsingSquare = minSquareCount[targetNumber - perfectSquare] + 1;
+                minSquareCount[targetNumber] = Math.min(
+                        minSquareCount[targetNumber],
+                        countAfterUsingSquare
+                );
             }
         }
 
-        return dp[n];
+        return minSquareCount[n];
     }
 }

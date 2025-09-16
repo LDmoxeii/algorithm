@@ -6,32 +6,36 @@ import java.util.Set;
 
 public class WordBreak {
     public boolean wordBreak(String s, List<String> wordDict) {
-        // 计算字典中最长单词的长度
-        int maxWordLength = 0;
-        for (String word : wordDict) {
-            maxWordLength = Math.max(maxWordLength, word.length());
+        // 计算字典中最长单词的长度，用于优化搜索范围
+        int maxWordLengthInDict = 0;
+        for (String dictWord : wordDict) {
+            maxWordLengthInDict = Math.max(maxWordLengthInDict, dictWord.length());
         }
 
         // 将字典转换为HashSet以提高查找效率
-        Set<String> wordSet = new HashSet<>(wordDict);
+        Set<String> dictWordSet = new HashSet<>(wordDict);
 
-        // dp[i]表示s的前i个字符是否可以被拆分
-        boolean[] dp = new boolean[s.length() + 1];
-        dp[0] = true; // 空字符串可以被拆分
+        // canBreakUpToPosition[i] 表示字符串s的前i个字符是否可以被拆分
+        boolean[] canBreakUpToPosition = new boolean[s.length() + 1];
+        canBreakUpToPosition[0] = true; // 空字符串可以被拆分
 
         // 对于每个位置，检查是否可以从之前的某个位置加上字典中的单词得到
-        for (int i = 1; i <= s.length(); i++) {
-            // 只检查从i-maxWordLength到i-1的范围，优化时间复杂度
-            int startPos = Math.max(i - maxWordLength, 0);
-            for (int j = i - 1; j >= startPos; j--) {
-                String word = s.substring(j, i);
-                if (dp[j] && wordSet.contains(word)) {
-                    dp[i] = true;
+        for (int currentPosition = 1; currentPosition <= s.length(); currentPosition++) {
+            // 只检查可能的起始位置范围，优化时间复杂度
+            int earliestStartPosition = Math.max(currentPosition - maxWordLengthInDict, 0);
+
+            for (int startPosition = currentPosition - 1; startPosition >= earliestStartPosition; startPosition--) {
+                // 提取从startPosition到currentPosition的子串
+                String candidateWord = s.substring(startPosition, currentPosition);
+
+                // 如果前面部分可以拆分且当前子串在字典中，则当前位置可以拆分
+                if (canBreakUpToPosition[startPosition] && dictWordSet.contains(candidateWord)) {
+                    canBreakUpToPosition[currentPosition] = true;
                     break; // 找到一种可行拆分即可停止
                 }
             }
         }
 
-        return dp[s.length()];
+        return canBreakUpToPosition[s.length()];
     }
 }

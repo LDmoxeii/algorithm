@@ -2,16 +2,25 @@ package com.only4.algorithm.version4j.leetcode;
 
 public class MajorityElement {
     public int majorityElement(int[] nums) {
-        int candidate = 0;
-        int count = 0;
+        // Boyer-Moore 投票算法：候选人和投票计数器
+        int majorityCandidate = 0;
+        int voteCount = 0;
 
-        for (int num : nums) {
-            if (count == 0) {
-                candidate = num;
+        for (int currentElement : nums) {
+            if (voteCount == 0) {
+                // 投票数为0时，选择当前元素作为新的候选人
+                majorityCandidate = currentElement;
             }
-            count += (num == candidate) ? 1 : -1;
+
+            // 如果当前元素支持候选人则+1票，否则-1票
+            if (currentElement == majorityCandidate) {
+                voteCount++;
+            } else {
+                voteCount--;
+            }
         }
 
-        return candidate;
+        // 由于题目保证多数元素存在，最终的候选人就是多数元素
+        return majorityCandidate;
     }
 }

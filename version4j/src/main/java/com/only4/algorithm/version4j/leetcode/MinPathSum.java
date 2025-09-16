@@ -2,26 +2,40 @@ package com.only4.algorithm.version4j.leetcode;
 
 public class MinPathSum {
     public int minPathSum(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length;
-        int[][] dp = new int[m][n];
+        int totalRows = grid.length;
+        int totalCols = grid[0].length;
+        // minPathSumToPosition[row][col] 表示到达位置(row, col)的最小路径和
+        int[][] minPathSumToPosition = new int[totalRows][totalCols];
 
-        dp[0][0] = grid[0][0];
+        // 起始位置的最小路径和就是起始位置的值
+        minPathSumToPosition[0][0] = grid[0][0];
 
-        for (int i = 1; i < m; i++) {
-            dp[i][0] = dp[i - 1][0] + grid[i][0];
+        // 初始化第一列：只能从上方到达，累加所有上方位置的值
+        for (int rowIndex = 1; rowIndex < totalRows; rowIndex++) {
+            int currentCellValue = grid[rowIndex][0];
+            int pathSumFromAbove = minPathSumToPosition[rowIndex - 1][0];
+            minPathSumToPosition[rowIndex][0] = pathSumFromAbove + currentCellValue;
         }
 
-        for (int j = 1; j < n; j++) {
-            dp[0][j] = dp[0][j - 1] + grid[0][j];
+        // 初始化第一行：只能从左侧到达，累加所有左侧位置的值
+        for (int colIndex = 1; colIndex < totalCols; colIndex++) {
+            int currentCellValue = grid[0][colIndex];
+            int pathSumFromLeft = minPathSumToPosition[0][colIndex - 1];
+            minPathSumToPosition[0][colIndex] = pathSumFromLeft + currentCellValue;
         }
 
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+        // 计算其他位置的最小路径和：选择上方和左方较小的路径和，加上当前位置的值
+        for (int rowIndex = 1; rowIndex < totalRows; rowIndex++) {
+            for (int colIndex = 1; colIndex < totalCols; colIndex++) {
+                int currentCellValue = grid[rowIndex][colIndex];
+                int pathSumFromAbove = minPathSumToPosition[rowIndex - 1][colIndex];
+                int pathSumFromLeft = minPathSumToPosition[rowIndex][colIndex - 1];
+                int minPathSumFromNeighbors = Math.min(pathSumFromAbove, pathSumFromLeft);
+                minPathSumToPosition[rowIndex][colIndex] = minPathSumFromNeighbors + currentCellValue;
             }
         }
 
-        return dp[m - 1][n - 1];
+        // 返回到达右下角的最小路径和
+        return minPathSumToPosition[totalRows - 1][totalCols - 1];
     }
 }
